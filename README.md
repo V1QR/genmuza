@@ -13,6 +13,14 @@
 
 No `npm install` or build step is needed. On Windows, `Start-GenMuza.cmd` starts the studio. The procedural music engine and the rules-based planning mode work without model weights.
 
+## Listen / Послушать
+
+- [Boss Fight — WAV](examples/audio/boss.wav)
+- [Tension Ambient — WAV](examples/audio/ambient.wav)
+- [Retro 8-bit — WAV](examples/audio/retro.wav)
+
+MIDI and editable JSON projects are included beside each WAV.
+
 ## Запуск
 
 Нужен Node.js 18 или новее. В каталоге проекта:
@@ -76,3 +84,11 @@ npm run prepare-model
 Синтез выполняется в Web Worker, проигрывание — через Web Audio API. Предпрослушивание рендерится в 22.05 kHz, экспорт — в 44.1 kHz. Циклическое накопление релизов и эффектов переносит хвосты через границу лупа. Мастер использует общий коэффициент ослабления при превышении 0.94 peak и DynamicsCompressor во время проигрывания.
 
 Это самостоятельная музыкальная студия с перечисленными работающими функциями. FM здесь — одна пара осцилляторов, wavetable — морфинг синтетических гармоник, granular — зерна из генерируемого источника, physical — модель струны. Редактор не включает произвольный граф модулей, многодорожечную аудиозапись или плагины VST. Автоматические метрики тональности и движения голосов не заменяют художественную оценку музыки.
+
+## Contributing / Участие
+
+Bug reports and suggestions are welcome in [Issues](https://github.com/V1QR/genmuza/issues). See [CONTRIBUTING.md](CONTRIBUTING.md) for reproduction details and local checks.
+
+## License / Лицензия
+
+Original project code is available under the [MIT License](LICENSE). Bundled dependencies retain their own licenses and notices in `dist/vendor/`. Model weights are downloaded separately and retain their original license.
