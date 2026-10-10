@@ -1,0 +1,12 @@
+{
+  "name": "genmuza-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "examples": "node examples/generate.mjs",
+    "prepare-model": "node scripts/prepare-model.mjs"
+  }
+}
