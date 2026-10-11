@@ -24,7 +24,7 @@ export class Player {
   startBuffer(audio,when,offset){
     const buffer=this.context.createBuffer(2,audio.left.length,audio.sampleRate);buffer.copyToChannel(audio.left,0);buffer.copyToChannel(audio.right,1);
     const source=this.context.createBufferSource();source.buffer=buffer;source.loop=this.loop;const gain=this.context.createGain();source.connect(gain);gain.connect(this.compressor);gain.gain.setValueAtTime(0,when);gain.gain.linearRampToValueAtTime(1,when+.03);source.start(when,Math.max(0,offset)%buffer.duration);
-    const item={source,gain};source.onended=()=>{this.sources=this.sources.filter(s=>s!==item);source.disconnect();gain.disconnect();if(this.playing&&!this.loop&&!this.sources.length){this.playing=false;this.onChange('stop');}};return item;
+    const item={source,gain,when};source.onended=()=>{this.sources=this.sources.filter(s=>s!==item);source.disconnect();gain.disconnect();if(this.playing&&!this.loop&&!this.sources.length){this.playing=false;this.onChange('stop');}};return item;
   }
   async update(project,{quantized=true}={}){
     if(!this.playing)return;
@@ -36,8 +36,12 @@ export class Player {
     const when=quantized?this.started+Math.ceil((now+.1-this.started)/barSeconds)*barSeconds:now+.1;
     const position=(when-this.started)%this.duration;
     if(!this.loop&&when-this.started>=this.duration){this.pending=null;this.onChange('play');return;}
-    const old=this.sources.slice();const next=this.startBuffer(audio,when,position);this.sources.push(next);
-    for(const s of old){s.gain.gain.cancelScheduledValues(when);s.gain.gain.setValueAtTime(1,when);s.gain.gain.linearRampToValueAtTime(0,when+.065);try{s.source.stop(when+.07);}catch{}}
+    const old=this.sources.filter(s=>s.when<=now);
+    for(const s of this.sources.filter(s=>s.when>now)){try{s.source.stop();}catch{}s.source.disconnect();s.gain.disconnect();}
+    this.sources=old;
+    const fade=Math.min(.45,barSeconds/4);
+    const next=this.startBuffer(audio,when,position);next.gain.gain.cancelScheduledValues(when);next.gain.gain.setValueAtTime(0,when);next.gain.gain.linearRampToValueAtTime(1,when+fade);this.sources.push(next);
+    for(const s of old){s.gain.gain.cancelScheduledValues(now);s.gain.gain.setValueAtTime(s.gain.gain.value,now);s.gain.gain.linearRampToValueAtTime(1,now+.04);s.gain.gain.setValueAtTime(1,when);s.gain.gain.linearRampToValueAtTime(0,when+fade);try{s.source.stop(when+fade+.01);}catch{}}
     if(this.pendingTimer)clearTimeout(this.pendingTimer);
     this.pending={when};this.onChange('pending');
     this.pendingTimer=setTimeout(()=>{if(token!==this.generation)return;this.project=project;this.audio=audio;this.pending=null;this.onChange('play');},Math.max(0,(when-now)*1000));

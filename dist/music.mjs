@@ -47,7 +47,7 @@ export const PRESETS = {
   orbit:{name:'Orbital Drift',subtitle:'Космос · FM · гранулы',bpm:80,root:0,scale:'pentatonic',intensity:30,algorithm:'logistic',instruments:{bass:'Sine sub',lead:'FM electric',pad:'Grain frost',bell:'Glass choir'},progression:[0,3,2,4]}
 };
 export const STATES = {exploration:{name:'Исследование',intensity:25},tension:{name:'Напряжение',intensity:50},combat:{name:'Бой',intensity:75},boss:{name:'Босс',intensity:100}};
-export const DEFAULT_CONFIG = {preset:'boss',bpm:120,root:9,scale:'minor',bars:16,intensity:75,algorithm:'square',seed:'MUZA-2026',melodyRevision:0,drumRevision:0,form:'loop',progression:[0,5,2,6],binary:'10010101',density:65,swing:0,humanize:10,master:.8};
+export const DEFAULT_CONFIG = {preset:'boss',bpm:120,root:9,scale:'minor',bars:16,intensity:75,algorithm:'square',seed:'MUZA-2026',melodyRevision:0,drumRevision:0,form:'loop',progression:[0,5,2,6],binary:'10010101',density:65,swing:0,humanize:10,master:.8,phrasing:'expressive'};
 export const clone = value => JSON.parse(JSON.stringify(value));
 export function hash(text) { let h=2166136261; for(const c of String(text)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0; }
 export function rng(seed){let a=hash(seed);return ()=>{a+=0x6d2b79f5;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;};}
@@ -85,7 +85,7 @@ export function sequence(algorithm,length,seed){
 export function chordAt(config,bar){
   let previous=[57,60,64];
   for(let index=0;index<=Math.floor(bar/2);index++){
-    const degree=config.progression[index%config.progression.length];
+    const degree=config.phrasing==='expressive'&&config.form==='song'&&bar===config.bars-1&&index===Math.floor(bar/2)?0:config.progression[index%config.progression.length];
     const raw=[0,2,4].map(d=>degreeNote(degree+d,config.root,config.scale,3));
     let best=null,bestCost=Infinity;
     for(const a of [-24,-12,0,12])for(const b of [-24,-12,0,12])for(const c of [-24,-12,0,12]){
@@ -109,6 +109,35 @@ export function sectionAt(config,bar){
   return bar>=config.bars/2&&bar<config.bars*.75?'Вариация':'Тема';
 }
 export function createTracks(preset='boss'){return TRACKS.map(t=>({...t,instrument:PRESETS[preset]?.instruments[t.id]||t.instrument,mute:false,solo:false,locked:false,filterType:'lowpass',fmIndex:INSTRUMENTS[PRESETS[preset]?.instruments[t.id]||t.instrument]?.index||2.5,fmRatio:INSTRUMENTS[PRESETS[preset]?.instruments[t.id]||t.instrument]?.ratio||2,detune:INSTRUMENTS[PRESETS[preset]?.instruments[t.id]||t.instrument]?.detune||0,morph:INSTRUMENTS[PRESETS[preset]?.instruments[t.id]||t.instrument]?.morph??.5,grainDensity:INSTRUMENTS[PRESETS[preset]?.instruments[t.id]||t.instrument]?.grains||6,automation:{volume:[],cutoff:[]}}));}
+export function phraseAt(config,bar){
+  const position=bar%4,section=sectionAt(config,bar);
+  const rhythms=[[0,3,6,8,12,14],[0,2,5,8,11],[0,2,4,7,8,10,12,15],[0,4,6,8,12]];
+  return {position,section,name:['Вопрос','Ответ','Развитие','Каденция'][position],steps:rhythms[position],cadence:position===3||bar===config.bars-1};
+}
+function melodicApproach(note,previous,config,anchored){
+  if(previous===null||anchored)return note;
+  const candidates=[];for(let n=60;n<=84;n++)if(SCALES[config.scale].includes((n-config.root+120)%12)&&Math.abs(n-previous)<=5)candidates.push(n);
+  return candidates.length?candidates.reduce((a,b)=>Math.abs(a-note)<=Math.abs(b-note)?a:b):note;
+}
+export function createVariants(project,count=3,round=0){
+  if(!Number.isInteger(count)||count<2||count>4)throw new Error('Вариантов должно быть 2–4');
+  const base=validateProject(project);
+  return Array.from({length:count},(_,i)=>{
+    const seed=(base.config.seed.slice(0,95)+':v'+round+'-'+(i+1));
+    const next=generate({...base.config,seed},base);
+    next.title=(base.title==='Безымянная тема'?PRESETS[base.config.preset].name:base.title)+' · '+String.fromCharCode(65+i);
+    return next;
+  });
+}
+export function extractFragment(project,startBar,bars=4){
+  const original=validateProject(project);
+  if(!Number.isInteger(startBar)||startBar<0||startBar%2||![4,8,16,32].includes(bars)||startBar+bars>original.config.bars)throw new Error('Выберите полный фрагмент с границы аккорда внутри композиции');
+  const offset=startBar*240/original.config.bpm;
+  const config={...clone(original.config),bars,form:'loop',progression:Array.from({length:Math.ceil(bars/2)},(_,i)=>original.config.progression[Math.floor((startBar+i*2)/2)%original.config.progression.length])};
+  const tracks=clone(original.tracks);for(const t of tracks)for(const key of ['volume','cutoff'])if(t.automation[key].length)t.automation[key]=t.automation[key].slice(startBar,startBar+bars);
+  const result={...original,config,tracks,title:original.title+' · такты '+(startBar+1)+'–'+(startBar+bars),events:original.events.filter(e=>e.bar>=startBar&&e.bar<startBar+bars).map(e=>({...e,bar:e.bar-startBar,time:Math.max(0,e.time-offset),duration:Math.min(e.duration,bars*240/config.bpm)}))};
+  return validateProject(result);
+}
 export function generate(config,oldProject=null,only=null){
   config=validateConfig(config);
   const tracks=oldProject?clone(oldProject.tracks):createTracks(config.preset);
@@ -127,7 +156,9 @@ export function generate(config,oldProject=null,only=null){
     events.push({id:`${track}-${bar}-${step}-${events.length}`,track,bar,step,time:Math.max(0,(bar*16+step+swing+jitter)*seconds),note:clamp(Math.round(note),0,127),duration:duration*seconds,velocity:clamp(velocity*(1+(rand()-.5)*config.humanize/100),.05,1),minIntensity:clamp(minIntensity,0,100)});
   };
   for(let bar=0;bar<config.bars;bar++){
-    const degree=config.progression[Math.floor(bar/2)%config.progression.length];
+    const expressive=config.phrasing==='expressive';
+    const phrase=phraseAt(config,bar);
+    const degree=expressive&&config.form==='song'&&bar===config.bars-1?0:config.progression[Math.floor(bar/2)%config.progression.length];
     const variation=sectionAt(config,bar)==='Вариация';
     const quiet=['Вступление','Финал'].includes(sectionAt(config,bar));
     const base=quiet?25:0;
@@ -140,22 +171,29 @@ export function generate(config,oldProject=null,only=null){
       if(variation&&s===15)add('snare',bar,s,38,.5,.42,base+75);
       if(s%2===0||drums()<.22)add('hat',bar,s,s===14?46:42,.4,s%4===0?.65:.38,base+(s%4===0?20:s%2===0?45:80));
       if(s%4===0||s===6||s===14)add('bass',bar,s,degreeNote(degree+(s===14?4:0),config.root,config.scale,1),s%4===0?2.8:1.5,s%4===0?.85:.55,base+(s%4===0?0:50));
-      const trigger=config.algorithm==='poly'?(bar*16+s)%3===0:config.algorithm==='binary'?config.binary[(bar*16+s)%config.binary.length]==='1':rhythm?rhythm[s]:s%2===0;
+      const trigger=config.algorithm==='poly'?(bar*16+s)%3===0:config.algorithm==='binary'?config.binary[(bar*16+s)%config.binary.length]==='1':rhythm?rhythm[s]:expressive?phrase.steps.includes(s):s%2===0;
       if(trigger){
         const i=config.algorithm==='poly'?Math.floor((bar*16+s)/3)%8:Math.floor(s/2)%8;const m=(motif[(i+(bar%4===3?2:0))%8]+motifOffset)%8;
         let d=config.algorithm==='mirror'&&bar%4>=2?-m:variation?7-m:m;
         // Chord tones on accented beats, bounded stepwise motion between them.
         if(s%4===0)d=[0,2,4][m%3];
         if(s===0&&bar%4===0)d=0;
-        const note=fitRegister(degreeNote(degree+d,config.root,config.scale,4),60,84,previousLead);previousLead=note;
+        if(expressive&&phrase.cadence&&s>=8)d=s>=12?0:2;
+        let note=fitRegister(degreeNote(degree+d,config.root,config.scale,4),60,84,previousLead);
+        if(expressive)note=melodicApproach(note,previousLead,config,s%4===0);
+        previousLead=note;
         const densityThreshold=clamp((100-config.density)*.5+(s%4===0?0:20),0,90);
-        add('lead',bar,s,note,s%4===0?1.6:.85,s%4===0?.75:.52,quiet?65:densityThreshold);
+        const length=expressive?(phrase.cadence&&s>=12?3.3:s%4===0?2.6:s===3||s===7?1.1:1.7):(s%4===0?1.6:.85);
+        add('lead',bar,s,note,length,s%4===0?.75:phrase.position===1?.48:.58,quiet?65:densityThreshold);
         if(config.algorithm==='cascade'&&s<12)add('bell',bar,s+3,note+12,.7,.35,55);
       }
-      if(s===3||s===11||variation&&s===7){
+      if(expressive?(phrase.position===1&&[3,11,14].includes(s)||phrase.position===3&&s===14):(s===3||s===11||variation&&s===7)){
         // Answer phrases favour a chord tone in a different register.
         add('bell',bar,s,fitRegister(chord[(bar+Math.floor(s/4))%3]+24,72,96),1.8,.5,quiet?20:55);
       }
+    }
+    if(expressive&&bar%4===3&&bar<config.bars-1){
+      add('snare',bar,14,38,.5,.38,80);add('snare',bar,15,38,.5,.58,80);
     }
     if(config.form==='song'&&bar===config.bars-1){
       for(let i=events.length-1;i>=0;i--)if(events[i].bar===bar&&events[i].step>7)events.splice(i,1);
@@ -195,7 +233,7 @@ export function validateConfig(value){
   }
   if(![4,8,16,32].includes(c.bars))throw new Error('Длина: 4, 8, 16 или 32 такта');
   if(!Number.isInteger(c.root)||!Number.isInteger(c.melodyRevision)||!Number.isInteger(c.drumRevision))throw new Error('Тональность и версии должны быть целыми');
-  if(!SCALES[c.scale]||!PRESETS[c.preset]||!ALGORITHMS.some(a=>a[0]===c.algorithm)||!['loop','song'].includes(c.form))throw new Error('Неизвестная гамма, стиль, алгоритм или форма');
+  if(!SCALES[c.scale]||!PRESETS[c.preset]||!ALGORITHMS.some(a=>a[0]===c.algorithm)||!['loop','song'].includes(c.form)||!['expressive','formula'].includes(c.phrasing))throw new Error('Неизвестная гамма, стиль, алгоритм, фразировка или форма');
   if(typeof c.seed!=='string'||!c.seed.length||c.seed.length>128)throw new Error('Seed должен содержать 1–128 символов');
   if(typeof c.binary!=='string'||!/^[01]{1,32}$/.test(c.binary)||!c.binary.includes('1'))throw new Error('Бинарный паттерн: 1–32 знака 0/1, хотя бы одна 1');
   if(!Array.isArray(c.progression)||!c.progression.length||c.progression.length>16||c.progression.some(d=>!Number.isInteger(d)||d<0||d>=SCALES[c.scale].length))throw new Error('Аккордовая прогрессия не соответствует гамме');

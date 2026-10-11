@@ -1,7 +1,8 @@
-import { DEFAULT_CONFIG, PRESETS, TRACKS, SCALES, SCALE_NAMES, ROOTS, ALGORITHMS, INSTRUMENTS, STATES, clone, clamp, generate, sequence, createTracks, noteName, chordAt, sectionAt, durationOf, activeEvents, assess, degreeNote, validateProject } from './music.mjs';
+import { DEFAULT_CONFIG, PRESETS, TRACKS, SCALES, SCALE_NAMES, ROOTS, ALGORITHMS, INSTRUMENTS, STATES, clone, clamp, generate, sequence, createTracks, noteName, chordAt, sectionAt, phraseAt, durationOf, activeEvents, assess, degreeNote, validateProject, createVariants, extractFragment, hash } from './music.mjs';
 import { wav, midi, zip, projectJSON } from './formats.mjs';
 import { Renderer, Player } from './player.mjs';
 import { parseModelPlan, quickPlan, planToProject } from './intent.mjs';
+import { readLibrary, storeProject, projectKey } from './library.mjs';
 const $=id=>document.getElementById(id);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const time=v=>`${String(Math.floor(v/60)).padStart(2,'0')}:${String(Math.floor(v%60)).padStart(2,'0')}`;
@@ -9,18 +10,19 @@ let project=generate(clone(DEFAULT_CONFIG)),bar=0,view='studio',pianoTrack='lead
 let storageAvailable=true;
 let automationTrack='lead',automationParam='volume',automationBar=0;
 let intentPlan=null,aiWorker=null,aiBusy=false,aiSequence=0,aiStarted=0,aiTimer;
+let variants=[],variantRound=0,previewVariant=null,demoTimers=[],demoRun=0,demoOriginal=null;
 try{const stored=localStorage.getItem('genmuza-session');if(stored)project=validateProject(JSON.parse(stored));}catch(error){storageAvailable=false;console.warn('Session could not be restored:',error.message);}
 const renderer=new Renderer();
 const player=new Player(renderer,status=>{
   $('play').disabled=status==='render';$('play').textContent=player.playing?'❚❚':'▶';$('play').setAttribute('aria-label',player.playing?'Остановить':'Воспроизвести');
   const message={render:'Рендер аудио…',play:'Воспроизведение',stop:'Композиция готова',pending:player.pending==='render'?'Подготовка перехода…':'Переход на следующем такте'}[status];
-  $('transport-status').textContent=message||'Готово';
+  $('transport-status').textContent=status==='play'&&previewVariant!==null?'Вариант '+String.fromCharCode(65+previewVariant)+' · прослушивание':message||'Готово';
   $('director-status').textContent=status==='pending'?'Переход по такту':STATES[currentState]?.name||'Свободная интенсивность';
 });
 function toast(message,error=false){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').className=error?'error':'';$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,6500);}
 function run(action){return async(...args)=>{try{await action(...args);}catch(error){toast(error.message,true);$('play').disabled=false;if(!player.playing)$('transport-status').textContent='Не удалось воспроизвести';}};}
 function remember(){history.push(clone(project));if(history.length>35)history.shift();$('undo').disabled=false;}
-function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem('genmuza-session',projectJSON(project));storageAvailable=true;$('save-state').textContent='Сохранено на устройстве';}catch{$('save-state').textContent='Сохраните JSON';storageAvailable=false;}},300);}
+function persist(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem('genmuza-session',projectJSON(demoOriginal||project));storageAvailable=true;$('save-state').textContent='Сохранено на устройстве';}catch{$('save-state').textContent='Сохраните JSON';storageAvailable=false;}},300);}
 function changed({audio=true,quantized=true}={}){persist();renderStudio();if(audio&&player.playing){clearTimeout(renderTimer);renderTimer=setTimeout(()=>player.update(clone(project),{quantized}).catch(e=>toast(e.message,true)),220);}}
 function optionList(items,selectedValue){return items.map(([v,n])=>`<option value="${escape(v)}" ${String(selectedValue)===String(v)?'selected':''}>${escape(n)}</option>`).join('');}
 $('root').innerHTML=optionList(ROOTS.map((n,i)=>[i,n]),project.config.root);
@@ -32,7 +34,7 @@ $('automation-track').innerHTML=optionList(TRACKS.map(t=>[t.id,t.name]),automati
 $('preset-list').innerHTML=Object.entries(PRESETS).map(([id,p])=>`<button class="preset" data-preset="${id}">${p.name}<small>${p.subtitle}</small></button>`).join('');
 $('algorithm-grid').innerHTML=ALGORITHMS.map((a,i)=>`<button class="algo-card" data-algorithm="${a[0]}"><span class="algo-number">${String(i+1).padStart(2,'0')}</span><h3>${a[1]}</h3><code>${escape(a[2])}</code><p>${a[3]}</p></button>`).join('');
 $('game-states').innerHTML=Object.entries(STATES).map(([id,s])=>`<button class="game-state" data-state="${id}">${s.name}<small>${s.intensity}% · ${s.intensity<40?'пространство':s.intensity<65?'пульсация':s.intensity<90?'ритм и бас':'все слои'}</small></button>`).join('');
-function syncConfig(){for(const id of ['bpm','root','scale','bars','form','seed','intensity','algorithm','binary','density','swing','humanize'])$(id).value=project.config[id];$('preset-selector').value=project.config.preset;$('master').value=project.config.master*100;$('progression').value=project.config.progression.map(n=>n+1).join(' ');for(const id of ['intensity','density','swing','humanize'])$(id+'-value').textContent=project.config[id]+'%';}
+function syncConfig(){for(const id of ['bpm','root','scale','bars','form','seed','intensity','algorithm','binary','density','swing','humanize','phrasing'])$(id).value=project.config[id];$('preset-selector').value=project.config.preset;$('master').value=project.config.master*100;$('progression').value=project.config.progression.map(n=>n+1).join(' ');for(const id of ['intensity','density','swing','humanize'])$(id+'-value').textContent=project.config[id]+'%';}
 function renderStudio(){
   const c=project.config;bar=Math.min(bar,c.bars-1);
   const metric=assess(project);const duration=durationOf(project);
@@ -41,7 +43,9 @@ function renderStudio(){
   $('event-count').textContent=metric.events+' активных событий';$('scale-score').textContent=metric.inScale+'% нот в гамме';
   $('bar-label').textContent=`ТАКТ ${String(bar+1).padStart(2,'0')} / ${c.bars}`;
   $('arrangement-bars').innerHTML=Array.from({length:c.bars},(_,i)=>{const section=sectionAt(c,i);return `<button class="arr-bar ${i===bar?'selected':''} ${section==='Вариация'?'variation':''} ${['Вступление','Финал'].includes(section)?'quiet':''}" data-bar="${i}" title="Такт ${i+1}: ${section}; ${chordAt(c,i).map(noteName).join(' / ')}">${String(i+1).padStart(2,'0')}<small>${c.progression[Math.floor(i/2)%c.progression.length]+1}</small></button>`;}).join('');
-  $('chord-label').textContent=sectionAt(c,bar)+' · '+chordAt(c,bar).map(noteName).join(' / ');
+  $('chord-label').textContent=sectionAt(c,bar)+(c.phrasing==='expressive'?' · '+phraseAt(c,bar).name:'')+' · '+chordAt(c,bar).map(noteName).join(' / ');
+  const fragmentSelect=$('fragment-start'),fragmentValue=fragmentSelect.value===''?Math.floor(bar/4)*4:Number(fragmentSelect.value);
+  fragmentSelect.innerHTML=optionList(Array.from({length:c.bars/4},(_,i)=>[i*4,`${i*4+1}–${i*4+4}`]),Math.min(fragmentValue,c.bars-4));
   const stepEvents=project.events.filter(e=>e.bar===bar);const solo=project.tracks.some(t=>t.solo&&!t.mute);
   $('sequencer').innerHTML=`<div class="sequence-header"><span>ДОРОЖКА / ИНСТРУМЕНТ</span>${Array.from({length:16},(_,s)=>`<span>${s+1}</span>`).join('')}<span>ГРОМКОСТЬ</span></div>`+project.tracks.map(t=>{
     const disabled=t.mute||solo&&!t.solo;
@@ -92,7 +96,7 @@ async function selectPreset(id){
   project=generate(c,previous);currentState=closestState(p.intensity);selected=null;syncConfig();renderSynth();changed();toast(p.name+' — новая аранжировка с текущим seed');
 }
 function closestState(value){return Object.keys(STATES).reduce((a,b)=>Math.abs(STATES[a].intensity-value)<Math.abs(STATES[b].intensity-value)?a:b);}
-function setView(name){view=name;document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='view-'+name);document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.view===name));const titles={intent:['Музыка по описанию','Сначала — настроение. Затем — музыка.','Встроенная нейросеть превращает ваши слова в управляемую музыкальную схему.'],studio:['Композитор','Сочините свой игровой мир.','Один мотив. Тысячи вариаций. Полный контроль над звуком.'],lab:['Лаборатория','У музыки есть формула.','18 алгоритмов. Гармоническая опора. Воспроизводимый результат.'],synth:['Синтезаторы','Придайте теме свой голос.','33 тембра из девяти семейств синтеза. Ни одного готового сэмпла.'],director:['Игровой дирижёр','Музыка следует за игрой.','Синхронные состояния, музыкальные события и готовый API.'],projects:['Проекты и экспорт','От идеи — к игровому треку.','Сохраните тему, откройте её в DAW или заберите отдельные слои.']}[name];$('view-title').textContent=titles[0];$('page-title').textContent=titles[1];$('page-description').textContent=titles[2];if(name==='synth')renderSynth();if(name==='projects')renderLibrary();}
+function setView(name){if(demoOriginal&&name!=='director')stopDemo();if(view==='variants'&&name!=='variants'&&previewVariant!==null){player.stop();previewVariant=null;}view=name;document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='view-'+name);document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.view===name));const titles={variants:['Варианты темы','Выберите тему на слух.','Три варианта одной идеи. Сравните, сохраните и продолжите редактирование.'],intent:['Музыка по описанию','Сначала — настроение. Затем — музыка.','Встроенная нейросеть превращает ваши слова в управляемую музыкальную схему.'],studio:['Композитор','Сочините свой игровой мир.','Один мотив. Тысячи вариаций. Полный контроль над звуком.'],lab:['Лаборатория','У музыки есть формула.','18 алгоритмов. Гармоническая опора. Воспроизводимый результат.'],synth:['Синтезаторы','Придайте теме свой голос.','33 тембра из девяти семейств синтеза. Ни одного готового сэмпла.'],director:['Игровой дирижёр','Музыка следует за игрой.','Синхронные состояния, музыкальные события и готовый API.'],projects:['Проекты и экспорт','От идеи — к игровому треку.','Сохраните тему, откройте её в DAW или заберите отдельные слои.']}[name];$('view-title').textContent=titles[0];$('page-title').textContent=titles[1];$('page-description').textContent=titles[2];if(name==='synth')renderSynth();if(name==='projects')renderLibrary();if(name==='variants')renderVariants();}
 function log(message){const node=document.createElement('div');node.textContent=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'  '+message;$('event-log').prepend(node);while($('event-log').children.length>30)$('event-log').lastElementChild.remove();}
 async function setIntensity(value){if(typeof value!=='number'||!Number.isFinite(value))throw new Error('Intensity: число 0–100');remember();project.config.intensity=clamp(Math.round(value),0,100);currentState=closestState(project.config.intensity);syncConfig();changed({audio:false});if(player.playing)await player.update(clone(project));log('Интенсивность → '+project.config.intensity+'%');}
 async function setState(id){if(!STATES[id])throw new Error('Неизвестное игровое состояние');await setIntensity(STATES[id].intensity);currentState=id;renderStudio();$('director-status').textContent=player.pending?'Переход по такту':STATES[id].name;log('Состояние → '+STATES[id].name);}
@@ -161,12 +165,39 @@ async function exportProject(format){
     toast(format==='wav'?'WAV готов: stereo PCM16, 44.1 kHz':'Game Kit готов: WAV, 7 stems, MIDI, JSON и SDK');
   }finally{busyExport=false;document.querySelectorAll('[data-export]').forEach(e=>e.disabled=false);}
 }
-function library(){try{return JSON.parse(localStorage.getItem('genmuza-library')||'[]');}catch{return [];}}
-function saveProject(){let items=library();const entry={id:crypto.randomUUID(),project:clone(project),savedAt:new Date().toISOString()};items.unshift(entry);if(items.length>30)items=items.slice(0,30);try{localStorage.setItem('genmuza-library',JSON.stringify(items));renderLibrary();toast('Проект сохранён в библиотеке браузера');}catch{download(projectJSON(project),'genmuza-backup.json','application/json');toast('Хранилище заполнено. Скачана резервная копия JSON.');}}
-function renderLibrary(){const items=library();$('project-list').innerHTML=items.length?'':'<div class="empty-library">Библиотека пока пуста. Сохраните текущую тему, чтобы вернуться к ней позже.</div>';for(const item of items){const row=document.createElement('div');row.className='project-row';const info=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('small');name.textContent=item.project.title==='Безымянная тема'?PRESETS[item.project.config.preset]?.name||'Проект':item.project.title;meta.textContent=`${item.project.config.bpm} BPM · ${item.project.config.bars} тактов · ${item.project.config.seed} · ${new Date(item.savedAt).toLocaleDateString('ru-RU')}`;info.append(name,meta);const open=document.createElement('button');open.className='subtle';open.textContent='Открыть';open.addEventListener('click',run(()=>{player.stop();remember();project=validateProject(item.project);selected=null;bar=0;syncConfig();renderSynth();changed();setView('studio');toast('Проект открыт');}));const backup=document.createElement('button');backup.className='text-btn';backup.textContent='JSON';backup.onclick=()=>download(projectJSON(item.project),'genmuza-project.json','application/json');row.append(info,open,backup);$('project-list').append(row);}}
+function library(){try{return readLibrary(JSON.parse(localStorage.getItem('genmuza-library')||'[]'));}catch{return [];}}
+function saveProject(snapshot=project,favorite=false){
+  try{const items=storeProject(library(),snapshot,{favorite,id:crypto.randomUUID(),savedAt:new Date().toISOString()});localStorage.setItem('genmuza-library',JSON.stringify(items));renderLibrary();renderVariants();toast(favorite?'Тема сохранена в избранном':'Проект сохранён в библиотеке браузера');}
+  catch(error){download(projectJSON(snapshot),'genmuza-backup.json','application/json');toast(error.message||'Хранилище заполнено. Скачана резервная копия JSON.',true);}
+}
+function openProject(value){stopDemo();player.stop();previewVariant=null;remember();project=validateProject(value);selected=null;bar=0;currentState=closestState(project.config.intensity);syncConfig();renderSynth();changed({audio:false});setView('studio');}
+function renderLibrary(){
+  const items=library().filter(item=>!$('favorites-only').checked||item.favorite);$('project-list').innerHTML=items.length?'':'<div class="empty-library">Здесь появятся сохранённые темы. Отметьте ★, чтобы добавить тему в избранное.</div>';
+  for(const item of items){const row=document.createElement('div');row.className='project-row';const info=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('small');name.textContent=item.project.title==='Безымянная тема'?PRESETS[item.project.config.preset]?.name||'Проект':item.project.title;meta.textContent=`${item.project.config.bpm} BPM · ${item.project.config.bars} тактов · ${item.project.config.seed}`;info.append(name,meta);
+    const star=document.createElement('button');star.className='favorite-button';star.textContent=item.favorite?'★':'☆';star.setAttribute('aria-label','Избранное: '+name.textContent);star.setAttribute('aria-pressed',String(item.favorite));star.onclick=run(()=>{const records=library();const match=records.find(i=>i.id===item.id);match.favorite=!match.favorite;localStorage.setItem('genmuza-library',JSON.stringify(records));renderLibrary();renderVariants();});
+    const open=document.createElement('button');open.className='subtle';open.textContent='Открыть';open.onclick=run(()=>openProject(item.project));const backup=document.createElement('button');backup.className='text-btn';backup.textContent='JSON';backup.onclick=()=>download(projectJSON(item.project),'genmuza-project.json','application/json');row.append(star,info,open,backup);$('project-list').append(row);
+  }
+}
+function renderVariants(){
+  const saved=new Set(library().filter(item=>item.favorite).map(item=>projectKey(item.project)));
+  $('variant-list').innerHTML=variants.length?variants.map((p,i)=>`<article class="panel variant-card"><div class="variant-letter">${String.fromCharCode(65+i)}</div><h2>${escape(p.title)}</h2><p>${p.config.bpm} BPM · ${p.config.bars} тактов · ${escape(SCALE_NAMES[p.config.scale])}</p><div class="variant-notes" aria-hidden="true">${p.events.filter(e=>e.track==='lead'&&e.bar<4).slice(0,36).map(e=>`<span style="height:${20+(e.note%24)*2}px"></span>`).join('')}</div><small class="mono">${escape(p.config.seed)}</small><div class="variant-actions"><button class="primary small" data-variant-play="${i}" aria-label="Прослушать вариант ${String.fromCharCode(65+i)}">▶ Прослушать</button><button class="subtle small" data-variant-use="${i}">Редактировать</button><button class="favorite-button" data-variant-favorite="${i}" aria-label="Сохранить вариант ${String.fromCharCode(65+i)} в избранное" aria-pressed="${saved.has(projectKey(p))}">${saved.has(projectKey(p))?'★':'☆'}</button></div></article>`).join(''):'<div class="empty-library">Нажмите «Создать 3 варианта». Текущая композиция останется в композиторе.</div>';
+}
+function buildVariants(){stopDemo();player.stop();previewVariant=null;variants=createVariants(project,3,++variantRound);try{localStorage.setItem('genmuza-variants',JSON.stringify({round:variantRound,projects:variants}));}catch{toast('Варианты доступны до закрытия страницы. Сохраните понравившийся в JSON.',true);}renderVariants();setView('variants');}
+function stopDemo(){demoRun++;demoTimers.forEach(clearTimeout);demoTimers=[];if(!demoOriginal)return;player.stop();project=demoOriginal;demoOriginal=null;currentState=closestState(project.config.intensity);syncConfig();changed({audio:false});$('director-status').textContent=STATES[currentState].name;$('demo-status').textContent='Демо остановлено. Ваша композиция восстановлена.';$('demo-stop').hidden=true;$('demo-start').disabled=false;}
+async function startDemo(){
+  stopDemo();player.stop();previewVariant=null;setView('director');demoOriginal=clone(project);const token=++demoRun;project=generate({...clone(DEFAULT_CONFIG),bars:16,intensity:25,seed:'GENMUZA-DEMO-2026',phrasing:'expressive'});currentState='exploration';syncConfig();renderStudio();$('demo-start').disabled=true;$('demo-stop').hidden=false;$('demo-status').textContent='Исследование → бой → босс · 24 секунды';
+  try{await player.play(clone(project));if(token!==demoRun)return;
+    const transition=async id=>{if(token!==demoRun)return;project.config.intensity=STATES[id].intensity;currentState=id;syncConfig();renderStudio();$('demo-status').textContent=STATES[id].name+' · та же тема, новые слои';await player.update(clone(project));};
+    demoTimers=[setTimeout(run(()=>transition('combat')),6000),setTimeout(run(()=>transition('boss')),14000),setTimeout(()=>{if(token===demoRun){stopDemo();$('demo-status').textContent='Демо завершено. Попробуйте свою тему или сравните три варианта.';}},24000)];
+  }catch(error){if(token===demoRun)stopDemo();throw error;}
+}
+try{const saved=JSON.parse(localStorage.getItem('genmuza-variants')||'null');if(saved&&Array.isArray(saved.projects)){variants=saved.projects.slice(0,3).map(validateProject);variantRound=Number.isInteger(saved.round)?saved.round:0;}}catch{}
 document.addEventListener('click',run(async e=>{
   const target=e.target.closest('button');if(!target)return;
   if(target.dataset.view)setView(target.dataset.view);
+  if(target.dataset.variantPlay!==undefined){stopDemo();const index=Number(target.dataset.variantPlay);previewVariant=index;await player.play(clone(variants[index]));renderVariants();}
+  if(target.dataset.variantUse!==undefined)openProject(variants[Number(target.dataset.variantUse)]);
+  if(target.dataset.variantFavorite!==undefined){const value=variants[Number(target.dataset.variantFavorite)],records=library(),match=records.find(item=>projectKey(item.project)===projectKey(value));if(match?.favorite){match.favorite=false;localStorage.setItem('genmuza-library',JSON.stringify(records));renderLibrary();renderVariants();}else saveProject(value,true);}
   if(target.dataset.preset)await selectPreset(target.dataset.preset);
   if(target.dataset.bar!==undefined){bar=Number(target.dataset.bar);selected=null;follow=false;$('follow').classList.remove('active');$('follow').setAttribute('aria-pressed','false');renderStudio();}
   if(target.dataset.step!==undefined){remember();const step=Number(target.dataset.step),track=target.dataset.track;const found=project.events.some(n=>n.bar===bar&&n.step===step&&n.track===track);if(found)project.events=project.events.filter(n=>!(n.bar===bar&&n.step===step&&n.track===track));else selected=addNote(track,step).id;changed();}
@@ -175,11 +206,11 @@ document.addEventListener('click',run(async e=>{
   if(target.dataset.editTrack){synthTrack=target.dataset.editTrack;setView('synth');}
   if(target.dataset.algorithm){remember();project.config.algorithm=target.dataset.algorithm;project=generate(project.config,project);syncConfig();changed();toast('Алгоритм применён: '+ALGORITHMS.find(a=>a[0]===target.dataset.algorithm)[1]);}
   if(target.dataset.instrument){remember();const t=project.tracks.find(t=>t.id===synthTrack),p=INSTRUMENTS[target.dataset.instrument];t.instrument=target.dataset.instrument;t.detune=p.detune||0;t.fmIndex=p.index||2.5;t.fmRatio=p.ratio||2;t.morph=p.morph??.5;t.grainDensity=p.grains||6;renderSynth();changed();}
-  if(target.dataset.state)await setState(target.dataset.state);
-  if(target.dataset.event)await trigger(target.dataset.event);
+  if(target.dataset.state){stopDemo();await setState(target.dataset.state);}
+  if(target.dataset.event){stopDemo();await trigger(target.dataset.event);}
   if(target.dataset.export)await exportProject(target.dataset.export);
 }));
-for(const id of ['bpm','root','scale','bars','form','seed','algorithm','binary','density','swing','humanize','progression'])$(id).addEventListener('change',run(()=>{
+for(const id of ['bpm','root','scale','bars','form','seed','algorithm','binary','density','swing','humanize','progression','phrasing'])$(id).addEventListener('change',run(()=>{
   const before=clone(project);try{
     const value=id==='progression'?$('progression').value.trim().split(/[\s,;]+/).map(n=>Number(n)-1):['bpm','root','bars','density','swing','humanize'].includes(id)?Number($(id).value):$(id).value;
     const next={...project.config,[id]:value};if(id==='scale')next.progression=next.progression.map(n=>n%SCALES[next.scale].length);
@@ -209,11 +240,14 @@ for(const id of ['note-length','note-velocity'])$(id).addEventListener('change',
 $('delete-note').onclick=()=>{if(!selected)return;remember();project.events=project.events.filter(e=>e.id!==selected);selected=null;changed();};
 $('generate').onclick=run(()=>regenerate());$('regenerate-melody').onclick=run(()=>regenerate('melody'));$('regenerate-drums').onclick=run(()=>regenerate('drums'));
 $('new-seed').onclick=run(()=>{remember();project.config.seed='MUZA-'+crypto.getRandomValues(new Uint32Array(1))[0].toString(36).toUpperCase();project.config.melodyRevision=0;project.config.drumRevision=0;project=generate(project.config,project);syncConfig();changed();});
-$('play').onclick=run(async()=>{if(player.playing)player.stop();else{await player.play(clone(project));player.setMaster(1);}});$('stop').onclick=()=>player.stop();
+$('play').onclick=run(async()=>{if(demoOriginal){stopDemo();return;}if(player.playing)player.stop();else{const playingProject=previewVariant!==null?variants[previewVariant]:project;await player.play(clone(playingProject));player.setMaster(1);}});$('stop').onclick=()=>{stopDemo();player.stop();};
 $('loop').onclick=()=>{player.setLoop(!player.loop);$('loop').classList.toggle('active',player.loop);$('loop').setAttribute('aria-pressed',String(player.loop));};
 $('follow').onclick=()=>{follow=!follow;$('follow').classList.toggle('active',follow);$('follow').setAttribute('aria-pressed',String(follow));};
 $('undo').onclick=()=>{if(!history.length)return;player.stop();project=history.pop();selected=null;syncConfig();renderSynth();changed({audio:false});$('undo').disabled=!history.length;toast('Последнее изменение отменено');};$('undo').disabled=true;
-$('save-project').onclick=saveProject;$('export-top').onclick=()=>setView('projects');$('import-project').onclick=()=>$('file-input').click();
+$('save-project').onclick=()=>saveProject();$('export-top').onclick=()=>setView('projects');$('import-project').onclick=()=>$('file-input').click();
+$('create-variants').onclick=run(buildVariants);$('compare-current').onclick=run(buildVariants);$('favorites-only').onchange=renderLibrary;
+$('favorite-current').onclick=()=>saveProject(project,true);$('save-fragment').onclick=run(()=>saveProject(extractFragment(project,Number($('fragment-start').value)),true));
+$('demo-start').onclick=run(startDemo);$('demo-stop').onclick=stopDemo;$('intro-demo').onclick=run(startDemo);
 $('file-input').addEventListener('change',run(async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>8e6)throw new Error('Размер проекта превышает 8 МБ');const imported=validateProject(JSON.parse(await file.text()));player.stop();remember();project=imported;bar=0;selected=null;syncConfig();changed({audio:false});renderSynth();setView('studio');toast('Импорт завершён: ноты и тембры восстановлены');}finally{e.target.value='';}}));
 $('new-project').onclick=run(()=>{saveProject();player.stop();remember();project=generate(clone(DEFAULT_CONFIG));bar=0;selected=null;syncConfig();changed({audio:false});renderSynth();setView('studio');});
 $('rename').onclick=()=>{const name=window.prompt('Название композиции',project.title);if(name?.trim()){remember();project.title=name.trim().slice(0,100);changed({audio:false});}};
@@ -223,7 +257,7 @@ $('auto-director').onchange=run(()=>{if($('auto-director').checked)updateGame({r
 $('copy-api').onclick=run(async()=>{await navigator.clipboard.writeText("await GenMuza.play();\nawait GenMuza.setState('combat');\nawait GenMuza.setIntensity(85);\nawait GenMuza.trigger('victory');\nGenMuza.updateGame({ risk: 0.7, health: 0.4, enemies: 6 });");toast('Пример API скопирован');});
 $('help').onclick=()=>$('help-dialog').showModal();$('close-help').onclick=()=>$('help-dialog').close();
 document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)||e.target.isContentEditable||$('help-dialog').open)return;if(e.code==='Space'){e.preventDefault();$('play').click();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('undo').click();}});
-window.GenMuza=Object.freeze({version:'1.0.0',play:()=>player.play(clone(project)),stop:()=>player.stop(),setState,setIntensity,trigger,updateGame,getProject:()=>clone(project),loadProject:value=>{const imported=validateProject(value);player.stop();remember();project=imported;bar=0;selected=null;syncConfig();changed({audio:false});renderSynth();},exportProject});
+window.GenMuza=Object.freeze({version:'1.1.0',play:()=>player.play(clone(project)),stop:()=>{stopDemo();player.stop();},setState,setIntensity,trigger,updateGame,getProject:()=>clone(project),loadProject:openProject,exportProject});
 // The bridge only accepts messages from the embedding parent at the same origin.
 window.addEventListener('message',run(async e=>{if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='genmuza')return;const {action,value}=e.data;if(action==='state')await setState(value);if(action==='intensity')await setIntensity(value);if(action==='event')await trigger(value);if(action==='game')updateGame(value);}));
 let lastStep=-1,lastBar=-1;const waveData=new Uint8Array(1024);
@@ -271,4 +305,4 @@ $('intent-apply').onclick=run(()=>{
   if(!intentPlan)return;const plan=clone(intentPlan);for(const k of ['bpm','intensity','root','bars','density'])plan[k]=Number($('plan-'+k).value);plan.scale=$('plan-scale').value;plan.drums=$('plan-drums').checked;plan.progression=plan.progression.map(n=>n%SCALES[plan.scale].length);
   const next=planToProject(plan);player.stop();remember();project=next;bar=0;selected=null;currentState=closestState(plan.intensity);syncConfig();renderSynth();changed({audio:false});setView('studio');toast('Музыка создана по плану. Нажмите ▶ для прослушивания.');
 });
-syncConfig();renderStudio();renderSynth();renderLibrary();persist();requestAnimationFrame(animate);
+syncConfig();renderStudio();renderSynth();renderLibrary();renderVariants();persist();requestAnimationFrame(animate);
