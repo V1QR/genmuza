@@ -1,6 +1,6 @@
 {
   "name": "genmuza-studio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Browser music studio with local AI mood planning, procedural game soundtracks, WAV, MIDI and stem export",
   "license": "MIT",
   "repository": {
@@ -19,6 +19,7 @@
     "dev": "node server.mjs",
     "test": "node --test tests/*.test.mjs",
     "examples": "node examples/generate.mjs",
+    "demo-audio": "node scripts/generate-demo.mjs",
     "prepare-model": "node scripts/prepare-model.mjs"
   }
 }

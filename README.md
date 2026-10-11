@@ -6,6 +6,12 @@
 
 ## Quick start / Быстрый старт
 
+[**Open the public studio / Открыть студию без установки →**](https://v1qr.github.io/genmuza/)
+
+Press **«Послушать демо»** for a 24-second exploration → combat → boss sequence. The demo restores your composition when it finishes. Try **«Варианты темы»** to compare three takes, choose one, or save favorites and four-bar phrases. The initial AI model download is only needed for neural mood planning.
+
+Для локального запуска и подготовки модели к работе без интернета:
+
 1. Download this repository using **Code → Download ZIP**, then extract it.
 2. Install Node.js 18+ if it is not already available.
 3. Run `npm run prepare-model` once to download the pinned model for offline use.
@@ -15,6 +21,7 @@ No `npm install` or build step is needed. On Windows, `Start-GenMuza.cmd` starts
 
 ## Listen / Послушать
 
+- [24-second adaptive demo — video](dist/media/demo.mp4) · [WAV](dist/media/demo.wav) · [editable project](dist/media/demo-project.json)
 - [Boss Fight — WAV](examples/audio/boss.wav)
 - [Tension Ambient — WAV](examples/audio/ambient.wav)
 - [Retro 8-bit — WAV](examples/audio/retro.wav)
@@ -59,6 +66,9 @@ npm run prepare-model
 - 8 музыкальных миров, 6 ладов, 4–32 такта, BPM 60–200, бесшовный луп и форма со вступлением, темой, вариацией и финалом.
 - Описание сцены → встроенная локальная MiniLM → редактируемая схема → музыка. Примеры описаний, прогресс подготовки и генерации, отмена, отдельный быстрый режим по правилам.
 - 18 алгоритмов, собственный seeded PRNG, мотивы, аккордовые прогрессии, подбор близких обращений аккордов и ограничение регистров.
+- Фразировка «вопрос → ответ → развитие → каденция», паузы и опорные ноты; отдельный режим чистой формулы. Финал полной композиции разрешается в тонику.
+- Три варианта одной темы: раздельное прослушивание, выбор и избранное. Защищённые дорожки и ручные ноты сохраняются.
+- Избранные темы и фрагменты по 4 такта с нотами, тембрами и автоматизацией. Библиотека не вытесняет избранное при заполнении.
 - 7 дорожек: Kick, Snare, Hi-hat, Bass, Lead, Pad, Bell. Mute, Solo, громкость и защита от перегенерации. Изолированное обновление мелодии или ударных.
 - 16-шаговый редактор и Piano Roll для каждого такта; высота, длина и velocity нот, undo.
 - 33 тембра: ударный синус, шум, subtractive, additive, FM, wavetable morph, синтетический granular, Karplus–Strong и Shepard glissando.
