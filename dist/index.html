@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ru">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141718"><meta name="description" content="ГенМуза — процедурная студия игровой музыки. Создавайте темы, редактируйте ноты и синтезаторы, экспортируйте WAV, MIDI и отдельные дорожки."><title>ГенМуза — процедурная музыкальная студия</title><link rel="icon" type="image/svg+xml" href="icon.svg"><link rel="stylesheet" href="style.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#141718"><meta name="description" content="GenMuza — procedural game music studio. Local AI mood planning, browser synthesis, WAV, MIDI and stems. English / Russian."><title>ГенМуза — процедурная музыкальная студия</title><link rel="icon" type="image/svg+xml" href="icon.svg"><link rel="stylesheet" href="style.css">
+<link rel="canonical" href="https://v1qr.github.io/genmuza/"><meta property="og:type" content="website"><meta property="og:title" content="GenMuza — procedural game music studio"><meta property="og:description" content="Describe a scene. Shape your soundtrack. Local AI, WAV, MIDI, stems, English / Russian, MIT."><meta property="og:url" content="https://v1qr.github.io/genmuza/"><meta property="og:image" content="https://v1qr.github.io/genmuza/media/social-card.png"><meta name="twitter:card" content="summary_large_image"></head>
 <body>
 <div class="app-shell">
   <aside class="sidebar">
@@ -20,7 +21,7 @@
     <div class="sidebar-bottom"><span class="status-dot"></span> Звук создаётся на устройстве<small>Без AI API и записанных треков</small><button id="help" class="text-btn">Как пользоваться ↗</button></div>
   </aside>
   <div class="workspace">
-    <header class="topbar"><div class="breadcrumbs">Студия <span>/</span> <span id="view-title">Композитор</span></div><div class="top-actions"><span id="save-state" class="muted">Автосохранение</span><button id="undo" class="icon-btn" title="Отменить (Ctrl+Z)" aria-label="Отменить">↶</button><button id="save-project" class="subtle">Сохранить проект</button><button id="export-top" class="primary small">Экспорт ↗</button></div></header>
+    <header class="topbar"><div class="breadcrumbs">Студия <span>/</span> <span id="view-title">Композитор</span></div><div class="top-actions"><label class="language-control" data-i18n-skip><span aria-hidden="true">◎</span><select id="language" aria-label="Language / Язык"><option value="ru">Русский</option><option value="en">English</option></select></label><span id="save-state" class="muted">Автосохранение</span><button id="undo" class="icon-btn" title="Отменить (Ctrl+Z)" aria-label="Отменить">↶</button><button id="save-project" class="subtle">Сохранить проект</button><button id="export-top" class="primary small">Экспорт ↗</button></div></header>
     <main>
       <div class="page-heading"><div><div class="eyebrow">МАТЕМАТИКА СТАНОВИТСЯ МУЗЫКОЙ</div><h1 id="page-title">Сочините свой игровой мир.</h1><p id="page-description">Один мотив. Тысячи вариаций. Полный контроль над звуком.</p></div><div class="session-label"><span class="status-dot"></span> Локальная сессия <span class="mono">01</span></div></div>
       <section class="view" id="view-intent" hidden>

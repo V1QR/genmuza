@@ -1,3 +1,4 @@
+import { translate as t, initLanguage, getLanguage } from './i18n.mjs';
 import { DEFAULT_CONFIG, PRESETS, TRACKS, SCALES, SCALE_NAMES, ROOTS, ALGORITHMS, INSTRUMENTS, STATES, clone, clamp, generate, sequence, createTracks, noteName, chordAt, sectionAt, phraseAt, durationOf, activeEvents, assess, degreeNote, validateProject, createVariants, extractFragment, hash } from './music.mjs';
 import { wav, midi, zip, projectJSON } from './formats.mjs';
 import { Renderer, Player } from './player.mjs';
@@ -38,7 +39,7 @@ function syncConfig(){for(const id of ['bpm','root','scale','bars','form','seed'
 function renderStudio(){
   const c=project.config;bar=Math.min(bar,c.bars-1);
   const metric=assess(project);const duration=durationOf(project);
-  $('composition-name').textContent=(project.title==='Безымянная тема'?PRESETS[c.preset].name:project.title)+' · '+ROOTS[c.root]+' '+SCALE_NAMES[c.scale].toLowerCase();
+  $('composition-name').setAttribute('data-i18n-skip','');$('composition-name').textContent=(project.title==='Безымянная тема'?PRESETS[c.preset].name:project.title)+' · '+ROOTS[c.root]+' '+t(SCALE_NAMES[c.scale]).toLowerCase();
   $('duration-label').textContent=time(duration);$('transport-total').textContent='/ '+time(duration);$('transport-bpm').textContent=c.bpm+' BPM';
   $('event-count').textContent=metric.events+' активных событий';$('scale-score').textContent=metric.inScale+'% нот в гамме';
   $('bar-label').textContent=`ТАКТ ${String(bar+1).padStart(2,'0')} / ${c.bars}`;
@@ -146,6 +147,17 @@ MIDI передаёт ноты, velocity, темп и приблизительн
 Браузер: window.GenMuza.play/setState/setIntensity/trigger/updateGame; genmuza-bridge.mjs для iframe того же origin. После загрузки нужен пользовательский клик для AudioContext.
 Защита от клиппинга применяется к mix; при суммировании stems обеспечьте headroom.
 `;
+const kitInstructionsEN=`GenMuza Game Kit
+Contents: mix.wav, stems/*.wav, composition.mid, project.json, genmuza-bridge.mjs.
+All WAV files: stereo PCM16, 44100 Hz. Duration follows the BPM and bar count.
+Stems include the current instruments, effects and intensity. Select 100% intensity before exporting all layers.
+For synchronized Exploration/Combat versions, export several kits at different intensities.
+Unity: import WAV as Decompress On Load. Start AudioSource.PlayScheduled using the same AudioSettings.dspTime for all stems. Enable loop; change layer volume at bar boundaries with a short fade. Disable Normalize on import to preserve the balance.
+Godot: import WAV with Loop Mode Forward. Start stem AudioStreamPlayers together; use AudioServer.get_time_since_last_mix and get_output_latency to estimate musical position. Change layer volume_db at bar boundaries.
+MIDI carries notes, velocity, tempo and approximate GM programs, rather than the studio's synthesizers.
+Browser: window.GenMuza.play/setState/setIntensity/trigger/updateGame; use genmuza-bridge.mjs for a same-origin iframe. AudioContext needs a user click after loading.
+Clipping protection applies to the mix; allow headroom when summing stems.
+`;
 async function exportProject(format){
   if(busyExport)return;const snapshot=clone(project);const filename='genmuza-'+snapshot.config.seed.replace(/[^a-zA-Z0-9_-]/g,'_');
   if(format==='json'){download(projectJSON(snapshot),filename+'.json','application/json');toast('Проект сохранён в JSON');return;}
@@ -157,7 +169,7 @@ async function exportProject(format){
     if(format==='wav')download(wav(audio),filename+'.wav','audio/wav');
     else{
       $('export-progress').textContent='Упаковка 7 дорожек…';
-      const files=[['mix.wav',wav(audio)],['composition.mid',midi(ignoreMix?{...snapshot,tracks:snapshot.tracks.map(t=>({...t,mute:false,solo:false}))}:snapshot)],['project.json',projectJSON(snapshot)],['genmuza-bridge.mjs',sdkSource],['README.txt',kitInstructions]];
+      const files=[['mix.wav',wav(audio)],['composition.mid',midi(ignoreMix?{...snapshot,tracks:snapshot.tracks.map(t=>({...t,mute:false,solo:false}))}:snapshot)],['project.json',projectJSON(snapshot)],['genmuza-bridge.mjs',sdkSource],['README.txt',getLanguage()==='en'?kitInstructionsEN:kitInstructions]];
       for(const stem of audio.stems)files.push(['stems/'+stem.track+'.wav',wav(stem)]);
       download(zip(files),filename+'-game-kit.zip','application/zip');
     }
@@ -173,14 +185,14 @@ function saveProject(snapshot=project,favorite=false){
 function openProject(value){stopDemo();player.stop();previewVariant=null;remember();project=validateProject(value);selected=null;bar=0;currentState=closestState(project.config.intensity);syncConfig();renderSynth();changed({audio:false});setView('studio');}
 function renderLibrary(){
   const items=library().filter(item=>!$('favorites-only').checked||item.favorite);$('project-list').innerHTML=items.length?'':'<div class="empty-library">Здесь появятся сохранённые темы. Отметьте ★, чтобы добавить тему в избранное.</div>';
-  for(const item of items){const row=document.createElement('div');row.className='project-row';const info=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('small');name.textContent=item.project.title==='Безымянная тема'?PRESETS[item.project.config.preset]?.name||'Проект':item.project.title;meta.textContent=`${item.project.config.bpm} BPM · ${item.project.config.bars} тактов · ${item.project.config.seed}`;info.append(name,meta);
+  for(const item of items){const row=document.createElement('div');row.className='project-row';const info=document.createElement('div'),name=document.createElement('strong'),meta=document.createElement('small');name.setAttribute('data-i18n-skip','');name.textContent=item.project.title==='Безымянная тема'?PRESETS[item.project.config.preset]?.name||'Проект':item.project.title;meta.innerHTML=`${item.project.config.bpm} BPM · ${item.project.config.bars} тактов · <span data-i18n-skip>${escape(item.project.config.seed)}</span>`;info.append(name,meta);
     const star=document.createElement('button');star.className='favorite-button';star.textContent=item.favorite?'★':'☆';star.setAttribute('aria-label','Избранное: '+name.textContent);star.setAttribute('aria-pressed',String(item.favorite));star.onclick=run(()=>{const records=library();const match=records.find(i=>i.id===item.id);match.favorite=!match.favorite;localStorage.setItem('genmuza-library',JSON.stringify(records));renderLibrary();renderVariants();});
     const open=document.createElement('button');open.className='subtle';open.textContent='Открыть';open.onclick=run(()=>openProject(item.project));const backup=document.createElement('button');backup.className='text-btn';backup.textContent='JSON';backup.onclick=()=>download(projectJSON(item.project),'genmuza-project.json','application/json');row.append(star,info,open,backup);$('project-list').append(row);
   }
 }
 function renderVariants(){
   const saved=new Set(library().filter(item=>item.favorite).map(item=>projectKey(item.project)));
-  $('variant-list').innerHTML=variants.length?variants.map((p,i)=>`<article class="panel variant-card"><div class="variant-letter">${String.fromCharCode(65+i)}</div><h2>${escape(p.title)}</h2><p>${p.config.bpm} BPM · ${p.config.bars} тактов · ${escape(SCALE_NAMES[p.config.scale])}</p><div class="variant-notes" aria-hidden="true">${p.events.filter(e=>e.track==='lead'&&e.bar<4).slice(0,36).map(e=>`<span style="height:${20+(e.note%24)*2}px"></span>`).join('')}</div><small class="mono">${escape(p.config.seed)}</small><div class="variant-actions"><button class="primary small" data-variant-play="${i}" aria-label="Прослушать вариант ${String.fromCharCode(65+i)}">▶ Прослушать</button><button class="subtle small" data-variant-use="${i}">Редактировать</button><button class="favorite-button" data-variant-favorite="${i}" aria-label="Сохранить вариант ${String.fromCharCode(65+i)} в избранное" aria-pressed="${saved.has(projectKey(p))}">${saved.has(projectKey(p))?'★':'☆'}</button></div></article>`).join(''):'<div class="empty-library">Нажмите «Создать 3 варианта». Текущая композиция останется в композиторе.</div>';
+  $('variant-list').innerHTML=variants.length?variants.map((p,i)=>`<article class="panel variant-card"><div class="variant-letter">${String.fromCharCode(65+i)}</div><h2 data-i18n-skip>${escape(p.title)}</h2><p>${p.config.bpm} BPM · ${p.config.bars} тактов · ${escape(SCALE_NAMES[p.config.scale])}</p><div class="variant-notes" aria-hidden="true">${p.events.filter(e=>e.track==='lead'&&e.bar<4).slice(0,36).map(e=>`<span style="height:${20+(e.note%24)*2}px"></span>`).join('')}</div><small class="mono" data-i18n-skip>${escape(p.config.seed)}</small><div class="variant-actions"><button class="primary small" data-variant-play="${i}" aria-label="Прослушать вариант ${String.fromCharCode(65+i)}">▶ Прослушать</button><button class="subtle small" data-variant-use="${i}">Редактировать</button><button class="favorite-button" data-variant-favorite="${i}" aria-label="Сохранить вариант ${String.fromCharCode(65+i)} в избранное" aria-pressed="${saved.has(projectKey(p))}">${saved.has(projectKey(p))?'★':'☆'}</button></div></article>`).join(''):'<div class="empty-library">Нажмите «Создать 3 варианта». Текущая композиция останется в композиторе.</div>';
 }
 function buildVariants(){stopDemo();player.stop();previewVariant=null;variants=createVariants(project,3,++variantRound);try{localStorage.setItem('genmuza-variants',JSON.stringify({round:variantRound,projects:variants}));}catch{toast('Варианты доступны до закрытия страницы. Сохраните понравившийся в JSON.',true);}renderVariants();setView('variants');}
 function stopDemo(){demoRun++;demoTimers.forEach(clearTimeout);demoTimers=[];if(!demoOriginal)return;player.stop();project=demoOriginal;demoOriginal=null;currentState=closestState(project.config.intensity);syncConfig();changed({audio:false});$('director-status').textContent=STATES[currentState].name;$('demo-status').textContent='Демо остановлено. Ваша композиция восстановлена.';$('demo-stop').hidden=true;$('demo-start').disabled=false;}
@@ -250,14 +262,14 @@ $('favorite-current').onclick=()=>saveProject(project,true);$('save-fragment').o
 $('demo-start').onclick=run(startDemo);$('demo-stop').onclick=stopDemo;$('intro-demo').onclick=run(startDemo);
 $('file-input').addEventListener('change',run(async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>8e6)throw new Error('Размер проекта превышает 8 МБ');const imported=validateProject(JSON.parse(await file.text()));player.stop();remember();project=imported;bar=0;selected=null;syncConfig();changed({audio:false});renderSynth();setView('studio');toast('Импорт завершён: ноты и тембры восстановлены');}finally{e.target.value='';}}));
 $('new-project').onclick=run(()=>{saveProject();player.stop();remember();project=generate(clone(DEFAULT_CONFIG));bar=0;selected=null;syncConfig();changed({audio:false});renderSynth();setView('studio');});
-$('rename').onclick=()=>{const name=window.prompt('Название композиции',project.title);if(name?.trim()){remember();project.title=name.trim().slice(0,100);changed({audio:false});}};
+$('rename').onclick=()=>{const name=window.prompt(t('Название композиции'),project.title);if(name?.trim()){remember();project.title=name.trim().slice(0,100);changed({audio:false});}};
 $('audition').onclick=run(async()=>{await player.init();const t=project.tracks.find(t=>t.id===synthTrack);const c={...clone(project.config),bars:4,bpm:200,intensity:100,master:.7,form:'song'};const preview={...clone(project),config:c,events:[{id:'audition',track:t.id,bar:0,step:0,time:0,note:['kick','snare','hat'].includes(t.id)?{kick:36,snare:38,hat:42}[t.id]:degreeNote(0,c.root,c.scale,t.id==='bass'?2:4),duration:.75,velocity:.8,minIntensity:0}],tracks:project.tracks.map(p=>({...p,mute:p.id!==t.id,solo:false}))};$('audition').disabled=true;try{const audio=await renderer.render(preview,{sampleRate:22050});const buffer=player.context.createBuffer(2,audio.left.length,audio.sampleRate);buffer.copyToChannel(audio.left,0);buffer.copyToChannel(audio.right,1);const source=player.context.createBufferSource();source.buffer=buffer;source.connect(player.compressor);source.start();source.onended=()=>source.disconnect();}finally{$('audition').disabled=false;}});
 for(const id of ['risk','health','enemies'])$(id).addEventListener('input',run(()=>{ $('risk-value').textContent=$('risk').value+'%';$('health-value').textContent=$('health').value+'%';if($('auto-director').checked)updateGame({risk:Number($('risk').value)/100,health:Number($('health').value)/100,enemies:Number($('enemies').value)});}));
 $('auto-director').onchange=run(()=>{if($('auto-director').checked)updateGame({risk:Number($('risk').value)/100,health:Number($('health').value)/100,enemies:Number($('enemies').value)});});
 $('copy-api').onclick=run(async()=>{await navigator.clipboard.writeText("await GenMuza.play();\nawait GenMuza.setState('combat');\nawait GenMuza.setIntensity(85);\nawait GenMuza.trigger('victory');\nGenMuza.updateGame({ risk: 0.7, health: 0.4, enemies: 6 });");toast('Пример API скопирован');});
 $('help').onclick=()=>$('help-dialog').showModal();$('close-help').onclick=()=>$('help-dialog').close();
 document.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)||e.target.isContentEditable||$('help-dialog').open)return;if(e.code==='Space'){e.preventDefault();$('play').click();}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();$('undo').click();}});
-window.GenMuza=Object.freeze({version:'1.1.0',play:()=>player.play(clone(project)),stop:()=>{stopDemo();player.stop();},setState,setIntensity,trigger,updateGame,getProject:()=>clone(project),loadProject:openProject,exportProject});
+window.GenMuza=Object.freeze({version:'1.2.0',play:()=>player.play(clone(project)),stop:()=>{stopDemo();player.stop();},setState,setIntensity,trigger,updateGame,getProject:()=>clone(project),loadProject:openProject,exportProject});
 // The bridge only accepts messages from the embedding parent at the same origin.
 window.addEventListener('message',run(async e=>{if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='genmuza')return;const {action,value}=e.data;if(action==='state')await setState(value);if(action==='intensity')await setIntensity(value);if(action==='event')await trigger(value);if(action==='game')updateGame(value);}));
 let lastStep=-1,lastBar=-1;const waveData=new Uint8Array(1024);
@@ -274,7 +286,7 @@ const intentExamples={forest:'Ночной лес. Спокойно, немно�
 $('plan-root').innerHTML=optionList(ROOTS.map((n,i)=>[i,n]),0);$('plan-scale').innerHTML=optionList(Object.entries(SCALE_NAMES),'minor');
 function showIntentPlan(plan){
   intentPlan=plan;$('intent-empty').hidden=true;$('intent-plan').hidden=false;
-  $('intent-title').textContent=plan.title;$('intent-explanation').textContent=plan.explanation;$('intent-source').textContent=plan.source;
+  $('intent-title').setAttribute('data-i18n-skip','');$('intent-title').textContent=plan.title==='Тема по описанию'?t(plan.title):plan.title;$('intent-explanation').textContent=plan.explanation;$('intent-source').textContent=plan.source;
   for(const k of ['bpm','intensity','root','scale','bars','density'])$('plan-'+k).value=plan[k];$('plan-drums').checked=plan.drums;
   const details=[['Музыкальный мир',PRESETS[plan.preset].name],['Мотив',ALGORITHMS.find(a=>a[0]===plan.algorithm)[1]],['Гармония',plan.progression.map(n=>n+1).join(' → ')],['Тембры',Object.entries(plan.instruments).map(([t,n])=>TRACKS.find(x=>x.id===t).name+': '+n).join(' · ')||'Тембры выбранного мира']];
   $('intent-details').replaceChildren();for(const [label,value] of details){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;$('intent-details').append(dt,dd);}
@@ -300,9 +312,11 @@ $('intent-analyze').onclick=()=>{
   try{getAIWorker().postMessage({id:++aiSequence,type:'analyze',description});}catch(error){setAIBusy(false);$('intent-status').textContent=error.message;}
 };
 $('intent-cancel').onclick=()=>{aiSequence++;aiWorker?.terminate();aiWorker=null;setAIBusy(false);$('intent-status').textContent='Разбор отменён. Можно изменить описание и повторить.';};
-document.querySelectorAll('[data-intent-example]').forEach(button=>button.onclick=()=>{$('intent-description').value=intentExamples[button.dataset.intentExample];});
+document.querySelectorAll('[data-intent-example]').forEach(button=>button.onclick=()=>{$('intent-description').value=t(intentExamples[button.dataset.intentExample]);});
 $('intent-apply').onclick=run(()=>{
   if(!intentPlan)return;const plan=clone(intentPlan);for(const k of ['bpm','intensity','root','bars','density'])plan[k]=Number($('plan-'+k).value);plan.scale=$('plan-scale').value;plan.drums=$('plan-drums').checked;plan.progression=plan.progression.map(n=>n%SCALES[plan.scale].length);
   const next=planToProject(plan);player.stop();remember();project=next;bar=0;selected=null;currentState=closestState(plan.intensity);syncConfig();renderSynth();changed({audio:false});setView('studio');toast('Музыка создана по плану. Нажмите ▶ для прослушивания.');
 });
-syncConfig();renderStudio();renderSynth();renderLibrary();renderVariants();persist();requestAnimationFrame(animate);
+syncConfig();renderStudio();renderSynth();renderLibrary();renderVariants();
+initLanguage(()=>{renderStudio();renderSynth();renderLibrary();renderVariants();if(intentPlan)$('intent-title').textContent=intentPlan.title==='Тема по описанию'?t(intentPlan.title):intentPlan.title;});
+persist();requestAnimationFrame(animate);
