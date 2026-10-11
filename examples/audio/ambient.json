@@ -23,6 +23,7 @@
     "swing": 0,
     "humanize": 10,
     "master": 0.8,
+    "phrasing": "expressive",
     "name": "Tension Ambient",
     "subtitle": "Воздух · текстуры · ожидание",
     "instruments": {
@@ -54,9 +55,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "snare",
@@ -79,9 +85,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "hat",
@@ -104,9 +115,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "bass",
@@ -129,9 +145,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "lead",
@@ -154,9 +175,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "pad",
@@ -179,9 +205,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
       "morph": 0.5,
-      "grainDensity": 6
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     },
     {
       "id": "bell",
@@ -204,9 +235,14 @@
       "locked": false,
       "filterType": "lowpass",
       "fmIndex": 2.5,
+      "fmRatio": 2,
       "detune": 0,
-      "morph": 0.5,
-      "grainDensity": 6
+      "morph": 0.75,
+      "grainDensity": 6,
+      "automation": {
+        "volume": [],
+        "cutoff": []
+      }
     }
   ],
   "events": [
@@ -272,7 +308,7 @@
       "step": 0,
       "time": 0.0003515828575473279,
       "note": 69,
-      "duration": 0.33333333333333337,
+      "duration": 0.5416666666666667,
       "velocity": 0.7681511270930059,
       "minIntensity": 17.5
     },
@@ -299,17 +335,6 @@
       "minIntensity": 80
     },
     {
-      "id": "lead-0-2-9",
-      "track": "lead",
-      "bar": 0,
-      "step": 2,
-      "time": 0.41601532047304013,
-      "note": 67,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5030646507749335,
-      "minIntensity": 37.5
-    },
-    {
       "id": "hat-0-2-8",
       "track": "hat",
       "bar": 0,
@@ -321,18 +346,18 @@
       "minIntensity": 45
     },
     {
-      "id": "bell-0-3-10",
-      "track": "bell",
+      "id": "lead-0-3-9",
+      "track": "lead",
       "bar": 0,
       "step": 3,
-      "time": 0.6240804384098738,
-      "note": 81,
-      "duration": 0.375,
-      "velocity": 0.492988285922911,
-      "minIntensity": 55
+      "time": 0.6243486538063735,
+      "note": 67,
+      "duration": 0.22916666666666669,
+      "velocity": 0.5611105720181949,
+      "minIntensity": 37.5
     },
     {
-      "id": "snare-0-4-11",
+      "id": "snare-0-4-10",
       "track": "snare",
       "bar": 0,
       "step": 4,
@@ -343,18 +368,18 @@
       "minIntensity": 40
     },
     {
-      "id": "lead-0-4-14",
-      "track": "lead",
+      "id": "bass-0-4-12",
+      "track": "bass",
       "bar": 0,
       "step": 4,
-      "time": 0.8334318572114474,
-      "note": 72,
-      "duration": 0.33333333333333337,
-      "velocity": 0.725983180082403,
-      "minIntensity": 17.5
+      "time": 0.8324137717432072,
+      "note": 33,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8380800860689487,
+      "minIntensity": 0
     },
     {
-      "id": "hat-0-4-12",
+      "id": "hat-0-4-11",
       "track": "hat",
       "bar": 0,
       "step": 4,
@@ -365,29 +390,7 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-0-4-13",
-      "track": "bass",
-      "bar": 0,
-      "step": 4,
-      "time": 0.8345157208449868,
-      "note": 33,
-      "duration": 0.5833333333333334,
-      "velocity": 0.8350974230549764,
-      "minIntensity": 0
-    },
-    {
-      "id": "bass-0-6-16",
-      "track": "bass",
-      "bar": 0,
-      "step": 6,
-      "time": 1.2485869344418463,
-      "note": 33,
-      "duration": 0.3125,
-      "velocity": 0.5709346475556959,
-      "minIntensity": 50
-    },
-    {
-      "id": "hat-0-6-15",
+      "id": "hat-0-6-13",
       "track": "hat",
       "bar": 0,
       "step": 6,
@@ -398,29 +401,51 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-0-6-17",
+      "id": "lead-0-6-15",
       "track": "lead",
       "bar": 0,
       "step": 6,
-      "time": 1.2495788413711126,
+      "time": 1.2500985238781142,
       "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5231877301977947,
+      "duration": 0.3541666666666667,
+      "velocity": 0.5614269925970583,
       "minIntensity": 37.5
     },
     {
-      "id": "bass-0-8-20",
+      "id": "bass-0-6-14",
+      "track": "bass",
+      "bar": 0,
+      "step": 6,
+      "time": 1.2511823875116534,
+      "note": 33,
+      "duration": 0.3125,
+      "velocity": 0.5403571560943965,
+      "minIntensity": 50
+    },
+    {
+      "id": "bass-0-8-18",
       "track": "bass",
       "bar": 0,
       "step": 8,
-      "time": 1.6652632255349695,
+      "time": 1.6652536011085128,
       "note": 33,
       "duration": 0.5833333333333334,
-      "velocity": 0.8422951793647371,
+      "velocity": 0.8823535462224391,
       "minIntensity": 0
     },
     {
-      "id": "hat-0-8-19",
+      "id": "lead-0-8-19",
+      "track": "lead",
+      "bar": 0,
+      "step": 8,
+      "time": 1.6662455080377792,
+      "note": 69,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7545976877852808,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "hat-0-8-17",
       "track": "hat",
       "bar": 0,
       "step": 8,
@@ -431,7 +456,7 @@
       "minIntensity": 20
     },
     {
-      "id": "kick-0-8-18",
+      "id": "kick-0-8-16",
       "track": "kick",
       "bar": 0,
       "step": 8,
@@ -442,29 +467,7 @@
       "minIntensity": 35
     },
     {
-      "id": "lead-0-8-21",
-      "track": "lead",
-      "bar": 0,
-      "step": 8,
-      "time": 1.6669921190960546,
-      "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7627612436190248,
-      "minIntensity": 17.5
-    },
-    {
-      "id": "lead-0-10-23",
-      "track": "lead",
-      "bar": 0,
-      "step": 10,
-      "time": 2.083412047226496,
-      "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5444885587915779,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "hat-0-10-22",
+      "id": "hat-0-10-20",
       "track": "hat",
       "bar": 0,
       "step": 10,
@@ -475,29 +478,29 @@
       "minIntensity": 45
     },
     {
-      "id": "bell-0-11-24",
-      "track": "bell",
-      "bar": 0,
-      "step": 11,
-      "time": 2.291409321084454,
-      "note": 88,
-      "duration": 0.375,
-      "velocity": 0.49151949209626766,
-      "minIntensity": 55
-    },
-    {
-      "id": "bass-0-12-27",
+      "id": "bass-0-12-23",
       "track": "bass",
       "bar": 0,
       "step": 12,
-      "time": 2.4998061819234865,
+      "time": 2.4985965588683032,
       "note": 33,
       "duration": 0.5833333333333334,
-      "velocity": 0.8565516468964052,
+      "velocity": 0.8422951793647371,
       "minIntensity": 0
     },
     {
-      "id": "hat-0-12-26",
+      "id": "lead-0-12-24",
+      "track": "lead",
+      "bar": 0,
+      "step": 12,
+      "time": 2.500325452429388,
+      "note": 69,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7627612436190248,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "hat-0-12-22",
       "track": "hat",
       "bar": 0,
       "step": 12,
@@ -508,7 +511,7 @@
       "minIntensity": 20
     },
     {
-      "id": "snare-0-12-25",
+      "id": "snare-0-12-21",
       "track": "snare",
       "bar": 0,
       "step": 12,
@@ -519,29 +522,29 @@
       "minIntensity": 40
     },
     {
-      "id": "lead-0-12-28",
+      "id": "lead-0-14-27",
       "track": "lead",
       "bar": 0,
-      "step": 12,
-      "time": 2.5008603768714237,
-      "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7205361351545434,
-      "minIntensity": 17.5
+      "step": 14,
+      "time": 2.916409321084454,
+      "note": 65,
+      "duration": 0.3541666666666667,
+      "velocity": 0.5701626108316704,
+      "minIntensity": 37.5
     },
     {
-      "id": "bass-0-14-30",
+      "id": "bass-0-14-26",
       "track": "bass",
       "bar": 0,
       "step": 14,
-      "time": 2.917694162167997,
+      "time": 2.9167453805598296,
       "note": 40,
       "duration": 0.3125,
-      "velocity": 0.525352342989063,
+      "velocity": 0.5759013602603228,
       "minIntensity": 50
     },
     {
-      "id": "hat-0-14-29",
+      "id": "hat-0-14-25",
       "track": "hat",
       "bar": 0,
       "step": 14,
@@ -552,29 +555,7 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-0-14-31",
-      "track": "lead",
-      "bar": 0,
-      "step": 14,
-      "time": 2.9178269303580846,
-      "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5304735604114831,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "pad-1-0-34",
-      "track": "pad",
-      "bar": 1,
-      "step": 0,
-      "time": 3.332012409958164,
-      "note": 64,
-      "duration": 2.916666666666667,
-      "velocity": 0.5609220052091405,
-      "minIntensity": 0
-    },
-    {
-      "id": "hat-1-0-36",
+      "id": "hat-1-0-32",
       "track": "hat",
       "bar": 1,
       "step": 0,
@@ -585,40 +566,40 @@
       "minIntensity": 20
     },
     {
-      "id": "pad-1-0-33",
+      "id": "pad-1-0-28",
       "track": "pad",
       "bar": 1,
       "step": 0,
-      "time": 3.3328194870305503,
+      "time": 3.3331395152568195,
+      "note": 57,
+      "duration": 2.916666666666667,
+      "velocity": 0.5844705355293117,
+      "minIntensity": 0
+    },
+    {
+      "id": "pad-1-0-29",
+      "track": "pad",
+      "bar": 1,
+      "step": 0,
+      "time": 3.3341937102047576,
       "note": 60,
       "duration": 2.916666666666667,
-      "velocity": 0.5989554465287364,
+      "velocity": 0.5572146111861802,
       "minIntensity": 0
     },
     {
-      "id": "bass-1-0-37",
-      "track": "bass",
+      "id": "pad-1-0-30",
+      "track": "pad",
       "bar": 1,
       "step": 0,
-      "time": 3.3334311329160604,
-      "note": 33,
-      "duration": 0.5833333333333334,
-      "velocity": 0.8920369769143871,
-      "minIntensity": 0
-    },
-    {
-      "id": "lead-1-0-38",
-      "track": "lead",
-      "bar": 1,
-      "step": 0,
-      "time": 3.3336809180805482,
+      "time": 3.334360828834664,
       "note": 64,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7861923235177528,
-      "minIntensity": 17.5
+      "duration": 2.916666666666667,
+      "velocity": 0.5540079253339208,
+      "minIntensity": 0
     },
     {
-      "id": "kick-1-0-35",
+      "id": "kick-1-0-31",
       "track": "kick",
       "bar": 1,
       "step": 0,
@@ -629,29 +610,40 @@
       "minIntensity": 0
     },
     {
-      "id": "pad-1-0-32",
-      "track": "pad",
+      "id": "bass-1-0-33",
+      "track": "bass",
       "bar": 1,
       "step": 0,
-      "time": 3.334889275812505,
-      "note": 57,
-      "duration": 2.916666666666667,
-      "velocity": 0.5540303934761323,
+      "time": 3.334493597024751,
+      "note": 33,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8671202429803088,
       "minIntensity": 0
     },
     {
-      "id": "lead-1-2-40",
+      "id": "lead-1-0-34",
+      "track": "lead",
+      "bar": 1,
+      "step": 0,
+      "time": 3.334889275812505,
+      "note": 64,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7164186122536194,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "lead-1-2-36",
       "track": "lead",
       "bar": 1,
       "step": 2,
-      "time": 3.749790812827269,
+      "time": 3.749486153697217,
       "note": 67,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5261641673259437,
+      "duration": 0.3541666666666667,
+      "velocity": 0.4956872660927474,
       "minIntensity": 37.5
     },
     {
-      "id": "hat-1-2-39",
+      "id": "hat-1-2-35",
       "track": "hat",
       "bar": 1,
       "step": 2,
@@ -662,7 +654,18 @@
       "minIntensity": 45
     },
     {
-      "id": "hat-1-3-41",
+      "id": "bell-1-3-38",
+      "track": "bell",
+      "bar": 1,
+      "step": 3,
+      "time": 3.9570124099581636,
+      "note": 84,
+      "duration": 0.375,
+      "velocity": 0.4835534527665004,
+      "minIntensity": 55
+    },
+    {
+      "id": "hat-1-3-37",
       "track": "hat",
       "bar": 1,
       "step": 3,
@@ -673,18 +676,7 @@
       "minIntensity": 80
     },
     {
-      "id": "bell-1-3-42",
-      "track": "bell",
-      "bar": 1,
-      "step": 3,
-      "time": 3.958031856086503,
-      "note": 84,
-      "duration": 0.375,
-      "velocity": 0.4844331553322263,
-      "minIntensity": 55
-    },
-    {
-      "id": "snare-1-4-43",
+      "id": "snare-1-4-39",
       "track": "snare",
       "bar": 1,
       "step": 4,
@@ -695,7 +687,7 @@
       "minIntensity": 40
     },
     {
-      "id": "hat-1-4-44",
+      "id": "hat-1-4-40",
       "track": "hat",
       "bar": 1,
       "step": 4,
@@ -706,40 +698,40 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-1-4-45",
+      "id": "bass-1-4-41",
       "track": "bass",
       "bar": 1,
       "step": 4,
-      "time": 4.167061504888504,
+      "time": 4.166764466249394,
       "note": 33,
       "duration": 0.5833333333333334,
-      "velocity": 0.8121205563575495,
+      "velocity": 0.8920369769143871,
       "minIntensity": 0
     },
     {
-      "id": "lead-1-4-46",
+      "id": "lead-1-5-42",
       "track": "lead",
       "bar": 1,
-      "step": 4,
-      "time": 4.16799856723034,
-      "note": 72,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7647274641960394,
-      "minIntensity": 17.5
+      "step": 5,
+      "time": 4.375347584747215,
+      "note": 69,
+      "duration": 0.3541666666666667,
+      "velocity": 0.5031630870513618,
+      "minIntensity": 37.5
     },
     {
-      "id": "bass-1-6-48",
+      "id": "bass-1-6-44",
       "track": "bass",
       "bar": 1,
       "step": 6,
-      "time": 4.582544694495785,
+      "time": 4.5831241461606025,
       "note": 33,
       "duration": 0.3125,
-      "velocity": 0.5241577120334842,
+      "velocity": 0.556519792363979,
       "minIntensity": 50
     },
     {
-      "id": "hat-1-6-47",
+      "id": "hat-1-6-43",
       "track": "hat",
       "bar": 1,
       "step": 6,
@@ -750,18 +742,7 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-1-6-49",
-      "track": "lead",
-      "bar": 1,
-      "step": 6,
-      "time": 4.584419223193739,
-      "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5287166330097243,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "hat-1-7-50",
+      "id": "hat-1-7-45",
       "track": "hat",
       "bar": 1,
       "step": 7,
@@ -772,18 +753,7 @@
       "minIntensity": 80
     },
     {
-      "id": "bass-1-8-53",
-      "track": "bass",
-      "bar": 1,
-      "step": 8,
-      "time": 4.998612709931331,
-      "note": 33,
-      "duration": 0.5833333333333334,
-      "velocity": 0.8364379961474333,
-      "minIntensity": 0
-    },
-    {
-      "id": "hat-1-8-52",
+      "id": "hat-1-8-47",
       "track": "hat",
       "bar": 1,
       "step": 8,
@@ -794,7 +764,7 @@
       "minIntensity": 20
     },
     {
-      "id": "kick-1-8-51",
+      "id": "kick-1-8-46",
       "track": "kick",
       "bar": 1,
       "step": 8,
@@ -805,18 +775,29 @@
       "minIntensity": 35
     },
     {
-      "id": "lead-1-8-54",
+      "id": "bass-1-8-48",
+      "track": "bass",
+      "bar": 1,
+      "step": 8,
+      "time": 4.99969852275317,
+      "note": 33,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8235363640647847,
+      "minIntensity": 0
+    },
+    {
+      "id": "lead-1-8-49",
       "track": "lead",
       "bar": 1,
       "step": 8,
-      "time": 5.001482026032318,
+      "time": 5.000394838221837,
       "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7226691045274491,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7165769614919555,
       "minIntensity": 17.5
     },
     {
-      "id": "hat-1-9-55",
+      "id": "hat-1-9-50",
       "track": "hat",
       "bar": 1,
       "step": 9,
@@ -827,7 +808,7 @@
       "minIntensity": 80
     },
     {
-      "id": "hat-1-10-56",
+      "id": "hat-1-10-51",
       "track": "hat",
       "bar": 1,
       "step": 10,
@@ -838,40 +819,29 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-1-10-57",
-      "track": "lead",
-      "bar": 1,
-      "step": 10,
-      "time": 5.416873152707073,
-      "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5138642304232344,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "bell-1-11-58",
+      "id": "bell-1-11-53",
       "track": "bell",
       "bar": 1,
       "step": 11,
-      "time": 5.625368095664453,
+      "time": 5.624211361162452,
       "note": 81,
       "duration": 0.375,
-      "velocity": 0.49647551947273316,
+      "velocity": 0.476507010939531,
       "minIntensity": 55
     },
     {
-      "id": "lead-1-12-62",
+      "id": "lead-1-11-52",
       "track": "lead",
       "bar": 1,
-      "step": 12,
-      "time": 5.832003523884971,
+      "step": 11,
+      "time": 5.626331900563674,
       "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7177984548092353,
-      "minIntensity": 17.5
+      "duration": 0.3541666666666667,
+      "velocity": 0.4894255770854652,
+      "minIntensity": 37.5
     },
     {
-      "id": "hat-1-12-60",
+      "id": "hat-1-12-55",
       "track": "hat",
       "bar": 1,
       "step": 12,
@@ -882,18 +852,18 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-1-12-61",
+      "id": "bass-1-12-56",
       "track": "bass",
       "bar": 1,
       "step": 12,
-      "time": 5.833652563322297,
+      "time": 5.834419223193739,
       "note": 33,
       "duration": 0.5833333333333334,
-      "velocity": 0.8239081696805078,
+      "velocity": 0.8642483424197416,
       "minIntensity": 0
     },
     {
-      "id": "snare-1-12-59",
+      "id": "snare-1-12-54",
       "track": "snare",
       "bar": 1,
       "step": 12,
@@ -904,7 +874,7 @@
       "minIntensity": 40
     },
     {
-      "id": "hat-1-13-63",
+      "id": "hat-1-13-57",
       "track": "hat",
       "bar": 1,
       "step": 13,
@@ -915,29 +885,18 @@
       "minIntensity": 80
     },
     {
-      "id": "lead-1-14-66",
-      "track": "lead",
-      "bar": 1,
-      "step": 14,
-      "time": 6.248704204855312,
-      "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.4959883833555505,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "bass-1-14-65",
+      "id": "bass-1-14-59",
       "track": "bass",
       "bar": 1,
       "step": 14,
-      "time": 6.249561947925395,
+      "time": 6.248612709931331,
       "note": 40,
       "duration": 0.3125,
-      "velocity": 0.5474305882956833,
+      "velocity": 0.5412245857424569,
       "minIntensity": 50
     },
     {
-      "id": "hat-1-14-64",
+      "id": "hat-1-14-58",
       "track": "hat",
       "bar": 1,
       "step": 14,
@@ -948,7 +907,18 @@
       "minIntensity": 45
     },
     {
-      "id": "hat-1-15-67",
+      "id": "bell-1-14-60",
+      "track": "bell",
+      "bar": 1,
+      "step": 14,
+      "time": 6.251482026032318,
+      "note": 84,
+      "duration": 0.375,
+      "velocity": 0.48177940301829947,
+      "minIntensity": 55
+    },
+    {
+      "id": "hat-1-15-61",
       "track": "hat",
       "bar": 1,
       "step": 15,
@@ -959,40 +929,62 @@
       "minIntensity": 80
     },
     {
-      "id": "bass-2-0-73",
+      "id": "bass-2-0-67",
       "track": "bass",
       "bar": 2,
       "step": 0,
-      "time": 6.665615578476233,
+      "time": 6.665336857218305,
       "note": 41,
       "duration": 0.5833333333333334,
-      "velocity": 0.8874519515398425,
+      "velocity": 0.8135049154504668,
       "minIntensity": 0
     },
     {
-      "id": "lead-2-0-74",
+      "id": "lead-2-0-68",
       "track": "lead",
       "bar": 2,
       "step": 0,
-      "time": 6.665786932133294,
-      "note": 60,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7426594277727419,
+      "time": 6.666228614592062,
+      "note": 72,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7464962567668407,
       "minIntensity": 17.5
     },
     {
-      "id": "pad-2-0-68",
+      "id": "pad-2-0-62",
       "track": "pad",
       "bar": 2,
       "step": 0,
-      "time": 6.666233238816737,
+      "time": 6.6668731527070735,
       "note": 57,
       "duration": 2.916666666666667,
-      "velocity": 0.5779219402447343,
+      "velocity": 0.5731562570105306,
       "minIntensity": 0
     },
     {
-      "id": "kick-2-0-71",
+      "id": "pad-2-0-64",
+      "track": "pad",
+      "bar": 2,
+      "step": 0,
+      "time": 6.66698589665563,
+      "note": 65,
+      "duration": 2.916666666666667,
+      "velocity": 0.5621961628408171,
+      "minIntensity": 0
+    },
+    {
+      "id": "pad-2-0-63",
+      "track": "pad",
+      "bar": 2,
+      "step": 0,
+      "time": 6.66703476233112,
+      "note": 60,
+      "duration": 2.916666666666667,
+      "velocity": 0.5759116025883704,
+      "minIntensity": 0
+    },
+    {
+      "id": "kick-2-0-65",
       "track": "kick",
       "bar": 2,
       "step": 0,
@@ -1003,18 +995,7 @@
       "minIntensity": 0
     },
     {
-      "id": "pad-2-0-70",
-      "track": "pad",
-      "bar": 2,
-      "step": 0,
-      "time": 6.667636636770719,
-      "note": 65,
-      "duration": 2.916666666666667,
-      "velocity": 0.552061928641051,
-      "minIntensity": 0
-    },
-    {
-      "id": "hat-2-0-72",
+      "id": "hat-2-0-66",
       "track": "hat",
       "bar": 2,
       "step": 0,
@@ -1025,18 +1006,7 @@
       "minIntensity": 20
     },
     {
-      "id": "pad-2-0-69",
-      "track": "pad",
-      "bar": 2,
-      "step": 0,
-      "time": 6.668156128949582,
-      "note": 60,
-      "duration": 2.916666666666667,
-      "velocity": 0.566913337895181,
-      "minIntensity": 0
-    },
-    {
-      "id": "hat-2-1-75",
+      "id": "hat-2-1-69",
       "track": "hat",
       "bar": 2,
       "step": 1,
@@ -1047,7 +1017,18 @@
       "minIntensity": 80
     },
     {
-      "id": "hat-2-2-76",
+      "id": "lead-2-2-71",
+      "track": "lead",
+      "bar": 2,
+      "step": 2,
+      "time": 7.082037538188645,
+      "note": 67,
+      "duration": 0.3541666666666667,
+      "velocity": 0.5532178122042678,
+      "minIntensity": 37.5
+    },
+    {
+      "id": "hat-2-2-70",
       "track": "hat",
       "bar": 2,
       "step": 2,
@@ -1058,40 +1039,18 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-2-2-77",
-      "track": "lead",
-      "bar": 2,
-      "step": 2,
-      "time": 7.083929887332973,
-      "note": 67,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5224519527321682,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "bell-2-3-78",
-      "track": "bell",
-      "bar": 2,
-      "step": 3,
-      "time": 7.291439772903929,
-      "note": 89,
-      "duration": 0.375,
-      "velocity": 0.5208562829880975,
-      "minIntensity": 55
-    },
-    {
-      "id": "lead-2-4-82",
-      "track": "lead",
+      "id": "bass-2-4-74",
+      "track": "bass",
       "bar": 2,
       "step": 4,
-      "time": 7.499457565254124,
-      "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7761630114458966,
-      "minIntensity": 17.5
+      "time": 7.499566572150069,
+      "note": 41,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8469545676000416,
+      "minIntensity": 0
     },
     {
-      "id": "hat-2-4-80",
+      "id": "hat-2-4-73",
       "track": "hat",
       "bar": 2,
       "step": 4,
@@ -1102,18 +1061,7 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-2-4-81",
-      "track": "bass",
-      "bar": 2,
-      "step": 4,
-      "time": 7.5008146777785445,
-      "note": 41,
-      "duration": 0.5833333333333334,
-      "velocity": 0.883635120553663,
-      "minIntensity": 0
-    },
-    {
-      "id": "snare-2-4-79",
+      "id": "snare-2-4-72",
       "track": "snare",
       "bar": 2,
       "step": 4,
@@ -1124,7 +1072,18 @@
       "minIntensity": 40
     },
     {
-      "id": "hat-2-6-83",
+      "id": "lead-2-4-75",
+      "track": "lead",
+      "bar": 2,
+      "step": 4,
+      "time": 7.501489462282915,
+      "note": 69,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7330775921058375,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "hat-2-6-76",
       "track": "hat",
       "bar": 2,
       "step": 6,
@@ -1135,40 +1094,29 @@
       "minIntensity": 45
     },
     {
-      "id": "bass-2-6-84",
+      "id": "bass-2-6-77",
       "track": "bass",
       "bar": 2,
       "step": 6,
-      "time": 7.916640856616383,
+      "time": 7.917636636770719,
       "note": 41,
       "duration": 0.3125,
-      "velocity": 0.5331074808584527,
+      "velocity": 0.5235070012975485,
       "minIntensity": 50
     },
     {
-      "id": "lead-2-6-85",
+      "id": "lead-2-7-78",
       "track": "lead",
       "bar": 2,
-      "step": 6,
-      "time": 7.918023562634577,
+      "step": 7,
+      "time": 8.123948911809567,
       "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5226062410064042,
+      "duration": 0.22916666666666669,
+      "velocity": 0.6055554492860101,
       "minIntensity": 37.5
     },
     {
-      "id": "bell-2-7-86",
-      "track": "bell",
-      "bar": 2,
-      "step": 7,
-      "time": 8.125909701694763,
-      "note": 81,
-      "duration": 0.375,
-      "velocity": 0.4974757796968333,
-      "minIntensity": 55
-    },
-    {
-      "id": "kick-2-8-87",
+      "id": "kick-2-8-79",
       "track": "kick",
       "bar": 2,
       "step": 8,
@@ -1179,29 +1127,18 @@
       "minIntensity": 35
     },
     {
-      "id": "bass-2-8-89",
+      "id": "bass-2-8-81",
       "track": "bass",
       "bar": 2,
       "step": 8,
-      "time": 8.331952593859508,
+      "time": 8.33245359879996,
       "note": 41,
       "duration": 0.5833333333333334,
-      "velocity": 0.8177275068918243,
+      "velocity": 0.8416806848091074,
       "minIntensity": 0
     },
     {
-      "id": "lead-2-8-90",
-      "track": "lead",
-      "bar": 2,
-      "step": 8,
-      "time": 8.33266868518452,
-      "note": 65,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7303392676636578,
-      "minIntensity": 17.5
-    },
-    {
-      "id": "hat-2-8-88",
+      "id": "hat-2-8-80",
       "track": "hat",
       "bar": 2,
       "step": 8,
@@ -1212,7 +1149,18 @@
       "minIntensity": 20
     },
     {
-      "id": "hat-2-9-91",
+      "id": "lead-2-8-82",
+      "track": "lead",
+      "bar": 2,
+      "step": 8,
+      "time": 8.333929887332973,
+      "note": 65,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7535364702867811,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "hat-2-9-83",
       "track": "hat",
       "bar": 2,
       "step": 9,
@@ -1223,7 +1171,7 @@
       "minIntensity": 80
     },
     {
-      "id": "kick-2-10-92",
+      "id": "kick-2-10-84",
       "track": "kick",
       "bar": 2,
       "step": 10,
@@ -1234,18 +1182,18 @@
       "minIntensity": 35
     },
     {
-      "id": "lead-2-10-94",
+      "id": "lead-2-10-86",
       "track": "lead",
       "bar": 2,
       "step": 10,
-      "time": 8.750848442257848,
+      "time": 8.749773106237262,
       "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5170515237813815,
+      "duration": 0.3541666666666667,
+      "velocity": 0.604193288266193,
       "minIntensity": 37.5
     },
     {
-      "id": "hat-2-10-93",
+      "id": "hat-2-10-85",
       "track": "hat",
       "bar": 2,
       "step": 10,
@@ -1256,29 +1204,7 @@
       "minIntensity": 45
     },
     {
-      "id": "bell-2-11-95",
-      "track": "bell",
-      "bar": 2,
-      "step": 11,
-      "time": 8.956999652928548,
-      "note": 84,
-      "duration": 0.375,
-      "velocity": 0.48114049233263356,
-      "minIntensity": 55
-    },
-    {
-      "id": "lead-2-12-99",
-      "track": "lead",
-      "bar": 2,
-      "step": 12,
-      "time": 9.165217539520624,
-      "note": 65,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7838781446625944,
-      "minIntensity": 17.5
-    },
-    {
-      "id": "snare-2-12-96",
+      "id": "snare-2-12-87",
       "track": "snare",
       "bar": 2,
       "step": 12,
@@ -1289,7 +1215,7 @@
       "minIntensity": 40
     },
     {
-      "id": "hat-2-12-97",
+      "id": "hat-2-12-88",
       "track": "hat",
       "bar": 2,
       "step": 12,
@@ -1300,29 +1226,40 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-2-12-98",
+      "id": "lead-2-12-90",
+      "track": "lead",
+      "bar": 2,
+      "step": 12,
+      "time": 9.166124231920792,
+      "note": 65,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7761630114458966,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "bass-2-12-89",
       "track": "bass",
       "bar": 2,
       "step": 12,
-      "time": 9.167196762119662,
+      "time": 9.167481344445212,
       "note": 41,
       "duration": 0.5833333333333334,
-      "velocity": 0.8531325030850713,
+      "velocity": 0.883635120553663,
       "minIntensity": 0
     },
     {
-      "id": "bass-2-14-101",
+      "id": "bass-2-14-92",
       "track": "bass",
       "bar": 2,
       "step": 14,
-      "time": 9.582485898498028,
+      "time": 9.58330752328305,
       "note": 48,
       "duration": 0.3125,
-      "velocity": 0.5241766781371553,
+      "velocity": 0.5331074808584527,
       "minIntensity": 50
     },
     {
-      "id": "hat-2-14-100",
+      "id": "hat-2-14-91",
       "track": "hat",
       "bar": 2,
       "step": 14,
@@ -1333,18 +1270,7 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-2-14-102",
-      "track": "lead",
-      "bar": 2,
-      "step": 14,
-      "time": 9.584541261718307,
-      "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5286139576043933,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "snare-2-15-103",
+      "id": "snare-2-15-93",
       "track": "snare",
       "bar": 2,
       "step": 15,
@@ -1355,18 +1281,18 @@
       "minIntensity": 75
     },
     {
-      "id": "lead-3-0-110",
+      "id": "lead-2-15-94",
       "track": "lead",
-      "bar": 3,
-      "step": 0,
-      "time": 9.998487529311387,
+      "bar": 2,
+      "step": 15,
+      "time": 9.793023562634577,
       "note": 69,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7765951460343786,
-      "minIntensity": 17.5
+      "duration": 0.3541666666666667,
+      "velocity": 0.5829069611225276,
+      "minIntensity": 37.5
     },
     {
-      "id": "hat-3-0-108",
+      "id": "hat-3-0-99",
       "track": "hat",
       "bar": 3,
       "step": 0,
@@ -1377,40 +1303,40 @@
       "minIntensity": 20
     },
     {
-      "id": "bass-3-0-109",
-      "track": "bass",
-      "bar": 3,
-      "step": 0,
-      "time": 9.999387441354338,
-      "note": 41,
-      "duration": 0.5833333333333334,
-      "velocity": 0.8136244751641062,
-      "minIntensity": 0
-    },
-    {
-      "id": "pad-3-0-106",
+      "id": "pad-3-0-96",
       "track": "pad",
       "bar": 3,
       "step": 0,
-      "time": 9.999890744568985,
-      "note": 65,
-      "duration": 2.916666666666667,
-      "velocity": 0.5977670721714384,
-      "minIntensity": 0
-    },
-    {
-      "id": "pad-3-0-105",
-      "track": "pad",
-      "bar": 3,
-      "step": 0,
-      "time": 10.00017719104726,
+      "time": 9.998619260526176,
       "note": 60,
       "duration": 2.916666666666667,
-      "velocity": 0.5709896338083781,
+      "velocity": 0.557978769408539,
       "minIntensity": 0
     },
     {
-      "id": "kick-3-0-107",
+      "id": "lead-3-0-101",
+      "track": "lead",
+      "bar": 3,
+      "step": 0,
+      "time": 9.998666319595214,
+      "note": 69,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7217107384989503,
+      "minIntensity": 17.5
+    },
+    {
+      "id": "pad-3-0-97",
+      "track": "pad",
+      "bar": 3,
+      "step": 0,
+      "time": 9.999335351851187,
+      "note": 65,
+      "duration": 2.916666666666667,
+      "velocity": 0.5647957003265619,
+      "minIntensity": 0
+    },
+    {
+      "id": "kick-3-0-98",
       "track": "kick",
       "bar": 3,
       "step": 0,
@@ -1421,29 +1347,29 @@
       "minIntensity": 0
     },
     {
-      "id": "pad-3-0-104",
-      "track": "pad",
+      "id": "bass-3-0-100",
+      "track": "bass",
       "bar": 3,
       "step": 0,
-      "time": 10.000777252126863,
-      "note": 57,
-      "duration": 2.916666666666667,
-      "velocity": 0.5714514984013512,
+      "time": 10.000848442257848,
+      "note": 41,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8451803754118736,
       "minIntensity": 0
     },
     {
-      "id": "lead-3-2-112",
-      "track": "lead",
+      "id": "pad-3-0-95",
+      "track": "pad",
       "bar": 3,
-      "step": 2,
-      "time": 10.41630855134305,
-      "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.507860889909789,
-      "minIntensity": 37.5
+      "step": 0,
+      "time": 10.000909701694763,
+      "note": 57,
+      "duration": 2.916666666666667,
+      "velocity": 0.5770719044483266,
+      "minIntensity": 0
     },
     {
-      "id": "hat-3-2-111",
+      "id": "hat-3-2-102",
       "track": "hat",
       "bar": 3,
       "step": 2,
@@ -1454,29 +1380,18 @@
       "minIntensity": 45
     },
     {
-      "id": "bell-3-3-113",
-      "track": "bell",
-      "bar": 3,
-      "step": 3,
-      "time": 10.626473364159757,
-      "note": 81,
-      "duration": 0.375,
-      "velocity": 0.5095903031877242,
-      "minIntensity": 55
-    },
-    {
-      "id": "bass-3-4-116",
-      "track": "bass",
+      "id": "lead-3-4-106",
+      "track": "lead",
       "bar": 3,
       "step": 4,
-      "time": 10.83196968185924,
-      "note": 41,
-      "duration": 0.5833333333333334,
-      "velocity": 0.825236407922348,
-      "minIntensity": 0
+      "time": 10.83188420618729,
+      "note": 65,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7838781446625944,
+      "minIntensity": 17.5
     },
     {
-      "id": "hat-3-4-115",
+      "id": "hat-3-4-104",
       "track": "hat",
       "bar": 3,
       "step": 4,
@@ -1487,18 +1402,18 @@
       "minIntensity": 20
     },
     {
-      "id": "lead-3-4-117",
-      "track": "lead",
+      "id": "bass-3-4-105",
+      "track": "bass",
       "bar": 3,
       "step": 4,
-      "time": 10.834549482084306,
-      "note": 65,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7647366796969437,
-      "minIntensity": 17.5
+      "time": 10.833863428786328,
+      "note": 41,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8531325030850713,
+      "minIntensity": 0
     },
     {
-      "id": "snare-3-4-114",
+      "id": "snare-3-4-103",
       "track": "snare",
       "bar": 3,
       "step": 4,
@@ -1509,7 +1424,18 @@
       "minIntensity": 40
     },
     {
-      "id": "hat-3-6-118",
+      "id": "bass-3-6-108",
+      "track": "bass",
+      "bar": 3,
+      "step": 6,
+      "time": 11.249152565164696,
+      "note": 41,
+      "duration": 0.3125,
+      "velocity": 0.5241766781371553,
+      "minIntensity": 50
+    },
+    {
+      "id": "hat-3-6-107",
       "track": "hat",
       "bar": 3,
       "step": 6,
@@ -1520,51 +1446,40 @@
       "minIntensity": 45
     },
     {
-      "id": "bass-3-6-119",
-      "track": "bass",
-      "bar": 3,
-      "step": 6,
-      "time": 11.249439743090626,
-      "note": 41,
-      "duration": 0.3125,
-      "velocity": 0.5680105968518183,
-      "minIntensity": 50
-    },
-    {
-      "id": "lead-3-6-120",
+      "id": "lead-3-6-109",
       "track": "lead",
       "bar": 3,
       "step": 6,
-      "time": 11.25041329686428,
+      "time": 11.251207928384975,
       "note": 65,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5128507142057642,
+      "duration": 0.3541666666666667,
+      "velocity": 0.5896078757895157,
       "minIntensity": 37.5
     },
     {
-      "id": "lead-3-8-124",
+      "id": "lead-3-8-113",
       "track": "lead",
       "bar": 3,
       "step": 8,
-      "time": 11.66521293599823,
-      "note": 65,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7636887807457242,
+      "time": 11.666843857713927,
+      "note": 69,
+      "duration": 0.5416666666666667,
+      "velocity": 0.7383486644073856,
       "minIntensity": 17.5
     },
     {
-      "id": "bass-3-8-123",
+      "id": "bass-3-8-112",
       "track": "bass",
       "bar": 3,
       "step": 8,
-      "time": 11.666151804580538,
+      "time": 11.66744391879353,
       "note": 41,
       "duration": 0.5833333333333334,
-      "velocity": 0.8388060033321381,
+      "velocity": 0.8374720235192217,
       "minIntensity": 0
     },
     {
-      "id": "hat-3-8-122",
+      "id": "hat-3-8-111",
       "track": "hat",
       "bar": 3,
       "step": 8,
@@ -1575,7 +1490,7 @@
       "minIntensity": 20
     },
     {
-      "id": "kick-3-8-121",
+      "id": "kick-3-8-110",
       "track": "kick",
       "bar": 3,
       "step": 8,
@@ -1586,7 +1501,7 @@
       "minIntensity": 35
     },
     {
-      "id": "hat-3-10-125",
+      "id": "hat-3-10-114",
       "track": "hat",
       "bar": 3,
       "step": 10,
@@ -1597,51 +1512,29 @@
       "minIntensity": 45
     },
     {
-      "id": "lead-3-10-126",
-      "track": "lead",
-      "bar": 3,
-      "step": 10,
-      "time": 12.084582641492792,
-      "note": 69,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5268441929453984,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "bell-3-11-127",
-      "track": "bell",
-      "bar": 3,
-      "step": 11,
-      "time": 12.290566387809184,
-      "note": 89,
-      "duration": 0.375,
-      "velocity": 0.48010923702968283,
-      "minIntensity": 55
-    },
-    {
-      "id": "bass-3-12-130",
-      "track": "bass",
-      "bar": 3,
-      "step": 12,
-      "time": 12.499063173531614,
-      "note": 41,
-      "duration": 0.5833333333333334,
-      "velocity": 0.8253382007591427,
-      "minIntensity": 0
-    },
-    {
-      "id": "lead-3-12-131",
+      "id": "lead-3-12-118",
       "track": "lead",
       "bar": 3,
       "step": 12,
-      "time": 12.500151441510388,
-      "note": 72,
-      "duration": 0.33333333333333337,
-      "velocity": 0.7302748662186787,
+      "time": 12.499387441354338,
+      "note": 65,
+      "duration": 0.6875,
+      "velocity": 0.7179039486742114,
       "minIntensity": 17.5
     },
     {
-      "id": "hat-3-12-129",
+      "id": "bass-3-12-117",
+      "track": "bass",
+      "bar": 3,
+      "step": 12,
+      "time": 12.499890744568985,
+      "note": 41,
+      "duration": 0.5833333333333334,
+      "velocity": 0.8760379505960736,
+      "minIntensity": 0
+    },
+    {
+      "id": "hat-3-12-116",
       "track": "hat",
       "bar": 3,
       "step": 12,
@@ -1652,7 +1545,7 @@
       "minIntensity": 20
     },
     {
-      "id": "snare-3-12-128",
+      "id": "snare-3-12-115",
       "track": "snare",
       "bar": 3,
       "step": 12,
@@ -1663,7 +1556,18 @@
       "minIntensity": 40
     },
     {
-      "id": "kick-3-14-132",
+      "id": "bass-3-14-121",
+      "track": "bass",
+      "bar": 3,
+      "step": 14,
+      "time": 12.915154195978054,
+      "note": 48,
+      "duration": 0.3125,
+      "velocity": 0.5695031070918777,
+      "minIntensity": 50
+    },
+    {
+      "id": "kick-3-14-119",
       "track": "kick",
       "bar": 3,
       "step": 14,
@@ -1674,29 +1578,18 @@
       "minIntensity": 35
     },
     {
-      "id": "bass-3-14-134",
-      "track": "bass",
+      "id": "bell-3-14-122",
+      "track": "bell",
       "bar": 3,
       "step": 14,
-      "time": 12.916585357299725,
-      "note": 48,
-      "duration": 0.3125,
-      "velocity": 0.5508623143529985,
-      "minIntensity": 50
+      "time": 12.91630855134305,
+      "note": 81,
+      "duration": 0.375,
+      "velocity": 0.48832777875941247,
+      "minIntensity": 55
     },
     {
-      "id": "lead-3-14-135",
-      "track": "lead",
-      "bar": 3,
-      "step": 14,
-      "time": 12.916804933929477,
-      "note": 67,
-      "duration": 0.17708333333333334,
-      "velocity": 0.5303709727469832,
-      "minIntensity": 37.5
-    },
-    {
-      "id": "hat-3-14-133",
+      "id": "hat-3-14-120",
       "track": "hat",
       "bar": 3,
       "step": 14,
@@ -1717,6 +1610,6 @@
     1,
     0
   ],
-  "createdAt": "2026-10-10T16:10:07.114Z",
+  "createdAt": "2026-10-10T19:22:55.411Z",
   "title": "Безымянная тема"
 }
