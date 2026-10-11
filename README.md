@@ -1,14 +1,18 @@
-# ГенМуза
+# GenMuza / ГенМуза
 
 **GenMuza — a browser music studio for game soundtracks, procedural music and local AI mood planning.** Describe a scene, review the music plan, generate a track and export WAV, MIDI or a game kit with stems. Inference runs on your device; no Ollama or cloud AI API is required.
 
 Рабочая музыкальная студия для игровых тем. Встроенная MiniLM разбирает описание настроения и составляет редактируемый план. Процедурный движок создаёт ноты, ритмы и аудио на устройстве. Ollama, облачные AI API и установка пакетов не нужны.
 
+![GenMuza — procedural game music studio](dist/media/social-card.png)
+
 ## Quick start / Быстрый старт
 
 [**Open the public studio / Открыть студию без установки →**](https://v1qr.github.io/genmuza/)
 
-Press **«Послушать демо»** for a 24-second exploration → combat → boss sequence. The demo restores your composition when it finishes. Try **«Варианты темы»** to compare three takes, choose one, or save favorites and four-bar phrases. The initial AI model download is only needed for neural mood planning.
+Choose **English / Русский** in the top bar. The interface language is saved in your browser.
+
+Press **Play demo / Послушать демо** for a 24-second exploration → combat → boss sequence. The demo restores your composition when it finishes. Try **Theme variants / Варианты темы** to compare three takes, choose one, or save favorites and four-bar phrases. The initial AI model download is only needed for neural mood planning.
 
 Для локального запуска и подготовки модели к работе без интернета:
 

@@ -1,6 +1,6 @@
 {
   "name": "genmuza-studio",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Browser music studio with local AI mood planning, procedural game soundtracks, WAV, MIDI and stem export",
   "license": "MIT",
   "repository": {
